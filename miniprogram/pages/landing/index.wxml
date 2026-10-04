@@ -1,0 +1,18 @@
+<view class="page landing">
+  <view class="topline">
+    <text class="eyebrow">PERSONAL VALUE LAB</text>
+    <text class="settings" bindtap="openSettings">数据与隐私</text>
+  </view>
+  <view class="map-orbit">
+    <view class="orbit orbit-one"></view><view class="orbit orbit-two"></view><view class="orbit orbit-three"></view>
+    <view class="map-dot dot-one"></view><view class="map-dot dot-two"></view><view class="map-dot dot-three"></view>
+  </view>
+  <view class="eyebrow">3 分钟 · 不用登录 · 本地计算</view>
+  <view class="title">看见你的<br/>未来收入地图</view>
+  <view class="body intro">用少量个人职业信息，了解未来十年职业收入可能怎样变化，并带走一个可以马上开始的小行动。</view>
+  <view class="pill-row"><text>不上传财务明细</text><text>不做职业排名</text></view>
+  <button class="primary-button start" bindtap="start">开始看看</button>
+  <button wx:if="{{hasDraft}}" class="secondary-button continue" bindtap="continueDraft">继续上次的回答</button>
+  <view class="rule-link" bindtap="openRules">它是怎么算的？</view>
+  <view class="notice footer">它估算的是职业收入可能性，不给人定价，不用于征信、招聘或推荐。</view>
+</view>

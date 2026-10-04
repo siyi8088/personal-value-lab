@@ -1,0 +1,17 @@
+<view class="page share-page" wx:if="{{result}}">
+  <view class="eyebrow">分享时，不必分享隐私</view>
+  <view class="title">这是你的分享卡</view>
+  <view class="share-card">
+    <view class="card-brand">未来收入地图</view>
+    <view class="card-orbits"><view></view><view></view><view></view></view>
+    <view class="card-label">我的收入路径</view>
+    <view class="card-title">{{result.trajectory.title}}</view>
+    <view class="card-declaration">{{declaration}}</view>
+    <view class="card-footer">3 分钟，看见未来收入的可能性</view>
+  </view>
+  <canvas type="2d" id="shareCanvas" class="hidden-canvas"></canvas>
+  <view class="body privacy-copy">卡片不包含你的金额、年龄、职业、原始回答或建议细节。</view>
+  <button class="primary-button" open-type="share">发送给朋友</button>
+  <button class="secondary-button tip" bindtap="saveImage">{{imageReady ? '保存图片到相册' : '分享卡生成中…'}}</button>
+  <view class="notice">好友打开后会独立完成自己的测算，不会看到你的结果。</view>
+</view>

@@ -1,0 +1,10 @@
+{
+  "name": "personal-value-lab",
+  "version": "0.1.0",
+  "private": true,
+  "description": "本地优先的微信小程序：未来收入地图",
+  "scripts": {
+    "test": "node --test test/**/*.test.js",
+    "check": "node --check miniprogram/utils/quick-engine.js && node --check miniprogram/utils/storage.js"
+  }
+}

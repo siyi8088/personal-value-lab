@@ -1,0 +1,12 @@
+<view class="page question-page" wx:if="{{question}}">
+  <view class="progress-row"><text>问题 {{step + 1}} / {{total}}</text><view class="progress-track"><view class="progress-fill" style="width: {{((step + 1) / total) * 100}}%"></view></view></view>
+  <view class="question-title">{{question.title}}</view>
+  <view class="question-hint">{{question.hint}}</view>
+  <view class="options">
+    <view wx:for="{{question.options}}" wx:key="*this" class="option {{answer === item[0] ? 'selected' : ''}}" data-value="{{item[0]}}" bindtap="choose">
+      <text>{{item[1]}}</text><text wx:if="{{answer === item[0]}}" class="check">✓</text>
+    </view>
+  </view>
+  <view class="bottom-actions"><button class="secondary-button back" bindtap="previous">{{step === 0 ? '返回' : '上一题'}}</button><button class="primary-button next {{canContinue ? '' : 'disabled'}}" bindtap="next">{{step === total - 1 ? '生成我的地图' : '继续'}}</button></view>
+  <view class="notice">回答只保存在这台设备；无需登录即可查看结果。</view>
+</view>

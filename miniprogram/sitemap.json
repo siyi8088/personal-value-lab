@@ -1,0 +1,4 @@
+{
+  "desc": "未来收入地图页面索引",
+  "rules": [{ "action": "allow", "page": "*" }]
+}

@@ -1,0 +1,11 @@
+# WeChat developer tooling
+project.private.config.json
+miniprogram_npm/
+
+# JavaScript tooling
+node_modules/
+coverage/
+
+# Local artifacts
+.DS_Store
+*.log

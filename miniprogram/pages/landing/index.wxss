@@ -1,0 +1,12 @@
+.landing { display: flex; flex-direction: column; }
+.topline { display: flex; justify-content: space-between; align-items: center; }
+.settings { color: #567168; font-size: 24rpx; }
+.map-orbit { height: 420rpx; margin: 28rpx 0 22rpx; position: relative; overflow: hidden; border-radius: 40rpx; background: linear-gradient(135deg, #dcece1, #f4f0d8); }
+.orbit { position: absolute; border: 2rpx solid rgba(29,93,80,.27); border-radius: 50%; transform: rotate(-23deg); }
+.orbit-one { width: 460rpx; height: 210rpx; top: 125rpx; left: -30rpx; }
+.orbit-two { width: 610rpx; height: 290rpx; top: 50rpx; left: 90rpx; }
+.orbit-three { width: 370rpx; height: 180rpx; top: 178rpx; left: 275rpx; }
+.map-dot { position: absolute; width: 28rpx; height: 28rpx; border-radius: 50%; background: #1d5d50; box-shadow: 0 0 0 12rpx rgba(29,93,80,.12); }
+.dot-one { left: 190rpx; top: 228rpx; }.dot-two { left: 484rpx; top: 112rpx; background:#e37950; }.dot-three { left: 520rpx; top: 302rpx; background:#586fa3; }
+.intro { margin-top: 28rpx; }.pill-row { display:flex; gap:16rpx; margin-top:28rpx; }.pill-row text { padding: 10rpx 16rpx; border-radius: 999rpx; background:#e5eee8; color:#477064; font-size:22rpx; }
+.start { margin-top: auto; }.continue { margin-top: 18rpx; }.rule-link { margin: 32rpx auto; color:#1d5d50; text-decoration: underline; font-size:27rpx; }.footer { text-align:center; }

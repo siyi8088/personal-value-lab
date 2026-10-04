@@ -1,0 +1,24 @@
+<view class="page result-page" wx:if="{{result}}">
+  <view class="eyebrow">你的未来收入地图</view>
+  <view class="result-heading">{{result.trajectory.title}}</view>
+  <view class="body summary">{{result.trajectory.description}}</view>
+  <view class="income-card" wx:if="{{hasIncome}}">
+    <view class="income-caption">按今天购买力折算的未来十年职业收入情景</view>
+    <view class="scenario"><text>有压力时</text><text>{{result.displayIncome.bear}}</text></view>
+    <view class="scenario base"><text>按当前底盘</text><text>{{result.displayIncome.base}}</text></view>
+    <view wx:if="{{result.displayIncome.confirmed}}" class="scenario"><text>计入已确认变化</text><text>{{result.displayIncome.confirmed}}</text></view>
+    <view wx:else class="scenario unavailable"><text>未来上行</text><text>需要先验证</text></view>
+    <view class="income-note">默认不假设长期增长；已确认变化只影响前两年。这不包含资产、债务、投资收益或生活支出。</view>
+  </view>
+  <view class="qualitative-card" wx:else>
+    <view class="income-caption">你选择了不透露收入</view>
+    <view class="qualitative-title">仍然可以先看路径与稳定性</view>
+    <view class="income-note">当前收入稳定性：{{result.stability}}。未来可以随时补充收入区间，重新生成金额范围。</view>
+  </view>
+  <view class="action-preview"><text class="preview-label">此刻可以先做</text><text class="preview-title">{{result.actions[0].title}}</text><text class="preview-body">{{result.actions[0].firstStep}}</text></view>
+  <button class="primary-button" bindtap="openActions">看看我能做什么</button>
+  <button class="secondary-button share" bindtap="openShare">生成不含金额的分享卡</button>
+  <view class="links"><text bindtap="edit">修改回答</text><text bindtap="explain">它是怎么算的？</text></view>
+  <view class="upgrade" bindtap="upgrade"><text class="upgrade-title">想继续看安全垫、房贷和转行选择？</text><text class="upgrade-link">建立我的财务实验室（即将开放） →</text></view>
+  <view class="notice result-notice">{{result.disclosures[0]}}</view>
+</view>
