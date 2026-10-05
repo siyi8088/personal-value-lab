@@ -1,17 +1,37 @@
 <view class="page share-page" wx:if="{{result}}">
-  <view class="eyebrow">分享时，不必分享隐私</view>
-  <view class="title">这是你的分享卡</view>
+  <view class="eyebrow">分享时，不必透露隐私</view>
+  <view class="title">这是你的专属分享卡</view>
+
   <view class="share-card">
-    <view class="card-brand">未来收入地图</view>
-    <view class="card-orbits"><view></view><view></view><view></view></view>
-    <view class="card-label">我的收入路径</view>
-    <view class="card-title">{{result.trajectory.title}}</view>
-    <view class="card-declaration">{{declaration}}</view>
-    <view class="card-footer">3 分钟，看见未来收入的可能性</view>
+    <view class="card-brand">个人现金流 DCF 实验室</view>
+    <view class="card-orbits">
+      <view></view><view></view><view></view>
+    </view>
+
+    <view class="card-content">
+      <view class="card-badge-pill">{{result.persona ? result.persona.badge : '个人现金流系统'}}</view>
+      <view class="card-label">{{isWorkingDominant ? '工作期现值占比 (肉身打卡)' : '退休后现金流占比'}}</view>
+      <view class="card-title">{{mainRatioText}}</view>
+      <view class="card-declaration">{{result.persona ? result.persona.punchline : '不是我的身价，是我的收入系统能走多远。'}}</view>
+      <view class="card-sub">{{result.persona ? result.persona.sub : ''}}</view>
+    </view>
+
+    <!-- 底部小程序码区域 -->
+    <view class="card-qr-row">
+      <view class="qr-text-group">
+        <text class="qr-action-title">长按识别小程序码</text>
+        <text class="qr-action-desc">测测你的现金流系统能走多远</text>
+      </view>
+      <view class="qr-box">
+        <image class="qr-image" src="/assets/qrcode.png" mode="aspectFit"></image>
+      </view>
+    </view>
   </view>
+
   <canvas type="2d" id="shareCanvas" class="hidden-canvas"></canvas>
-  <view class="body privacy-copy">卡片不包含你的金额、年龄、职业、原始回答或建议细节。</view>
+
+  <view class="body privacy-copy">卡片不包含你的具体金额、资产、年龄、单位或敏感信息。</view>
   <button class="primary-button" open-type="share">发送给朋友</button>
   <button class="secondary-button tip" bindtap="saveImage">{{imageReady ? '保存图片到相册' : '分享卡生成中…'}}</button>
-  <view class="notice">好友打开后会独立完成自己的测算，不会看到你的结果。</view>
+  <view class="notice">好友扫码后将独立测算，不会看到你的回答与金额。</view>
 </view>

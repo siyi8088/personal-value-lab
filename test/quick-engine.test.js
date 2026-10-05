@@ -3,63 +3,98 @@ const assert = require('node:assert/strict')
 const { calculateQuick, ENGINE_VERSION } = require('../miniprogram/utils/quick-engine')
 
 const baseProfile = {
-  schemaVersion: 1,
-  ageBand: '30_34',
+  schemaVersion: 2,
+  gender: 'male',
+  birthYear: 1994, // 32 years old in 2026, statutory retirement age 63
   incomeBand: '8_12k',
   workType: 'stable_employed',
-  nearTermSignal: 'no_confirmed_change',
+  careerRisk: 'steady',
+  pensionTier: 'average', // 3000 / mo
+  hasRecurringEngine: 'none',
   goal: 'save'
 }
 
-test('calculates ordered ten-year scenarios for a complete profile', () => {
+test('calculates DCF structure and ratios for a complete profile', () => {
   const result = calculateQuick(baseProfile)
   assert.equal(result.engineVersion, ENGINE_VERSION)
-  assert.equal(result.trajectory.id, 'steady_builder')
-  assert.ok(result.tenYearIncome.bear.low <= result.tenYearIncome.base.low)
-  assert.ok(result.tenYearIncome.bear.high <= result.tenYearIncome.base.high)
-  assert.equal(result.tenYearIncome.confirmed, undefined)
-  assert.match(result.displayIncome.base, /万/)
+  assert.equal(result.statutoryRetirementAge, 63)
+  assert.ok(result.dcf.moneyAvailable)
+
+  // Working period PV, pension PV, and total PV
+  assert.ok(result.dcf.workingPv.mid > 0)
+  assert.ok(result.dcf.postRetirePv.mid > 0)
+  assert.equal(result.dcf.strictTvPv.mid, 0) // No recurring engine -> Strict TV = 0
+
+  // Ratios sum to 100
+  const { workingRatio, postRetirementRatio, strictTvRatio } = result.dcf.ratios
+  assert.equal(workingRatio + postRetirementRatio + strictTvRatio, 100)
+  assert.ok(postRetirementRatio > 0 && postRetirementRatio < 50)
+  assert.equal(strictTvRatio, 0)
+
+  // Persona
+  assert.ok(result.persona)
+  assert.equal(result.persona.type, 'labor_dominant')
+  assert.equal(result.persona.dominantPillar, 'working')
+  assert.ok(result.persona.badge)
+  assert.ok(result.persona.punchline)
+})
+
+test('correctly cuts off labor cash flow at 5 years when unemployment_risk is selected', () => {
+  const normalResult = calculateQuick({ ...baseProfile, careerRisk: 'steady' })
+  const cliffResult = calculateQuick({ ...baseProfile, careerRisk: 'unemployment_risk' })
+
+  // Cliff detection
+  assert.equal(cliffResult.dcf.cliff.hasCliff, true)
+  assert.equal(cliffResult.dcf.cliff.activeWorkYears, 5)
+  assert.ok(cliffResult.dcf.cliff.cliffYears > 20) // e.g. from age 37 to 63
+
+  // Working PV must be significantly smaller than normal lifetime working PV
+  assert.ok(cliffResult.dcf.workingPv.mid < normalResult.dcf.workingPv.mid)
+
+  // Post retirement cash flow ratio becomes much higher relatively
+  assert.ok(cliffResult.dcf.ratios.postRetirementRatio > normalResult.dcf.ratios.postRetirementRatio)
+})
+
+test('calculates strict Gordon TV when qualified recurring engine is present', () => {
+  const withEngineResult = calculateQuick({
+    ...baseProfile,
+    hasRecurringEngine: 'business',
+    engineMaintainedAfterRetire: true,
+    engineAnnualNetCashFlow: 50000
+  })
+
+  assert.ok(withEngineResult.dcf.strictTvPv.mid > 0)
+  assert.ok(withEngineResult.dcf.ratios.strictTvRatio > 0)
+  assert.match(withEngineResult.displayDcf.strictTvPv, /万/)
 })
 
 test('does not emit any money result when income is undisclosed', () => {
-  const result = calculateQuick({ ...baseProfile, incomeBand: 'undisclosed', workType: 'project', nearTermSignal: 'unclear' })
+  const result = calculateQuick({
+    ...baseProfile,
+    incomeBand: 'undisclosed',
+    workType: 'project',
+    careerRisk: 'steady'
+  })
+  assert.equal(result.dcf.moneyAvailable, false)
   assert.equal(result.tenYearIncome, undefined)
   assert.equal(result.displayIncome, undefined)
-  assert.equal(result.trajectory.id, 'variable_operator')
-})
-
-test('uses neutral rebuilding language for transition profiles', () => {
-  const result = calculateQuick({ ...baseProfile, workType: 'transition', nearTermSignal: 'pressure', goal: 'career_change' })
-  assert.equal(result.trajectory.id, 'rebuilding')
-  assert.equal(result.actions[0].id, 'test-direction')
-  assert.ok(result.tenYearIncome.bear.low >= 0)
+  assert.equal(result.displayDcf, undefined)
 })
 
 test('rejects incomplete profiles instead of inventing an answer', () => {
   assert.throws(() => calculateQuick({ ageBand: '25_29' }), /请完成/)
 })
 
-test('keeps every disclosed-income work and short-term-signal combination ordered', () => {
-  const workTypes = ['stable_employed', 'employed_variable', 'project', 'business', 'transition']
-  const signals = ['confirmed_up', 'no_confirmed_change', 'pressure', 'unclear']
-  for (const workType of workTypes) {
-    for (const nearTermSignal of signals) {
-      const result = calculateQuick({ ...baseProfile, workType, nearTermSignal })
-      const { bear, base } = result.tenYearIncome
-      assert.ok(bear.low >= 0 && bear.high >= bear.low, `${workType}/${nearTermSignal} bear range`)
-      assert.ok(base.low >= bear.low && base.high >= bear.high, `${workType}/${nearTermSignal} base ordering`)
-    }
+test('supports legacy profile format with ageBand and nearTermSignal', () => {
+  const legacyProfile = {
+    ageBand: '30_34',
+    incomeBand: '8_12k',
+    workType: 'stable_employed',
+    nearTermSignal: 'no_confirmed_change',
+    goal: 'save'
   }
-})
-
-test('only includes a higher income path when an upturn is already confirmed', () => {
-  const result = calculateQuick({ ...baseProfile, nearTermSignal: 'confirmed_up' })
-  assert.ok(result.tenYearIncome.confirmed.low > result.tenYearIncome.base.low)
-  assert.ok(result.tenYearIncome.confirmed.high > result.tenYearIncome.base.high)
-})
-
-test('uses a flat real-income baseline when no change is confirmed', () => {
-  const result = calculateQuick(baseProfile)
-  // 8k–12k monthly income held at today’s purchasing power for 120 months.
-  assert.deepEqual(result.tenYearIncome.base, { low: 960000, high: 1440000 })
+  const result = calculateQuick(legacyProfile)
+  assert.ok(result.dcf.moneyAvailable)
+  assert.ok(result.dcf.workingPv.mid > 0)
+  assert.equal(result.careerRisk.id, 'steady')
 })

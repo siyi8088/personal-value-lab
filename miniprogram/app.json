@@ -5,10 +5,11 @@
     "pages/result/index",
     "pages/actions/index",
     "pages/share-card/index",
+    "pages/workbench/index",
     "pages/settings/index"
   ],
   "window": {
-    "navigationBarTitleText": "未来收入地图",
+    "navigationBarTitleText": "个人现金流 DCF 实验室",
     "navigationBarBackgroundColor": "#F7F8F3",
     "navigationBarTextStyle": "black",
     "backgroundColor": "#F7F8F3",

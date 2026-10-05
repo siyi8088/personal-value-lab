@@ -1,0 +1,545 @@
+<view class="workbench-page" wx:if="{{profile && forwardResult}}">
+  <!-- 顶部 Tab 导航 -->
+  <view class="tab-header">
+    <view class="tab-item {{activeTab === 0 ? 'active' : ''}}" data-tab="0" bindtap="switchTab">结构与诊断</view>
+    <view class="tab-item {{activeTab === 1 ? 'active' : ''}}" data-tab="1" bindtap="switchTab">现金流底表</view>
+    <view class="tab-item {{activeTab === 2 ? 'active' : ''}}" data-tab="2" bindtap="switchTab">假设实验室</view>
+    <view class="tab-item {{activeTab === 3 ? 'active' : ''}}" data-tab="3" bindtap="switchTab">目标倒推</view>
+  </view>
+
+  <!-- TAB 0: 结构与诊断 -->
+  <view wx:if="{{activeTab === 0}}" class="tab-content">
+    <!-- 口径切换胶囊 -->
+    <view class="basis-switch-row">
+      <view class="basis-pill {{profile.basis === 'income_capacity' ? 'active' : ''}}" data-basis="income_capacity" bindtap="toggleBasis">
+        收入能力口径 (Gross)
+      </view>
+      <view class="basis-pill {{profile.basis === 'disposable_cashflow' ? 'active' : ''}}" data-basis="disposable_cashflow" bindtap="toggleBasis">
+        可支配自由现金流 (Net PFCF)
+      </view>
+    </view>
+    <view class="basis-tip">
+      {{profile.basis === 'income_capacity' ? '当前口径不扣除生活支出与房贷，反映收入系统折现产出。' : '当前口径已扣除基本生活与房贷月供，反映真实可支配自由现金流。'}}
+    </view>
+
+    <!-- 现值瀑布总卡 -->
+    <view class="pcsv-summary-card">
+      <view class="pcsv-label">个人现金流系统总现值 (PCSV)</view>
+      <view class="pcsv-amount">{{displayPcsv}}</view>
+      <view class="pcsv-note-row">
+        <text class="pcsv-note">折现率 {{displayDiscountRate}} · 显性工作至 {{profile.expectedRetirementAge}} 岁</text>
+        <text class="pcsv-lab-link" bindtap="goToLabTab">调参实验室 🧪</text>
+      </view>
+
+      <!-- 四段式堆叠条 -->
+      <view class="stacked-bar">
+        <view class="bar-seg working" style="width: {{forwardResult.ratios.workingRatio}}%"></view>
+        <view class="bar-seg pension" style="width: {{forwardResult.ratios.pensionRatio}}%"></view>
+        <view class="bar-seg tv" style="width: {{forwardResult.ratios.strictTvRatio}}%"></view>
+        <view class="bar-seg nav" style="width: {{forwardResult.ratios.navRatio}}%"></view>
+      </view>
+    </view>
+
+    <!-- 四维度明细卡片（支持点击下钻钻取底表） -->
+    <view class="grid-dimensions">
+      <view class="dim-card clickable" data-target="working" bindtap="onDimensionTap">
+        <view class="dim-header">
+          <view class="dim-dot working-dot"></view>
+          <text class="dim-title">显性工作期现值</text>
+          <text class="dim-arrow">›</text>
+        </view>
+        <view class="dim-val">{{forwardResult.workingWan}} 万</view>
+        <view class="dim-ratio">占比 {{forwardResult.ratios.workingRatio}}%</view>
+      </view>
+
+      <view class="dim-card clickable" data-target="pension" bindtap="onDimensionTap">
+        <view class="dim-header">
+          <view class="dim-dot pension-dot"></view>
+          <text class="dim-title">退休后有限年金</text>
+          <text class="dim-arrow">›</text>
+        </view>
+        <view class="dim-val">{{forwardResult.pensionWan}} 万</view>
+        <view class="dim-ratio">占比 {{forwardResult.ratios.pensionRatio}}%</view>
+      </view>
+
+      <view class="dim-card clickable" data-target="tv" bindtap="onDimensionTap">
+        <view class="dim-header">
+          <view class="dim-dot tv-dot"></view>
+          <text class="dim-title">严格终值现值</text>
+          <text class="dim-arrow">›</text>
+        </view>
+        <view class="dim-val">{{forwardResult.strictTvWan}} 万</view>
+        <view class="dim-ratio">占比 {{forwardResult.ratios.strictTvRatio}}%</view>
+      </view>
+
+      <view class="dim-card clickable" data-target="nav" bindtap="onDimensionTap">
+        <view class="dim-header">
+          <view class="dim-dot nav-dot"></view>
+          <text class="dim-title">资产净值 (NAV)</text>
+          <text class="dim-arrow">›</text>
+        </view>
+        <view class="dim-val">{{forwardResult.netNavWan}} 万</view>
+        <view class="dim-ratio">占比 {{forwardResult.ratios.navRatio}}%</view>
+      </view>
+    </view>
+
+    <!-- 智能诊断结论卡片（双通道校准引导） -->
+    <view class="diagnosis-card {{diagnosisInfo.level}}" wx:if="{{diagnosisInfo}}">
+      <view class="diagnosis-header">
+        <text class="diagnosis-badge">{{diagnosisInfo.badge}}</text>
+        <text class="diagnosis-title">系统诊断洞察</text>
+      </view>
+      <view class="diagnosis-body">{{diagnosisInfo.text}}</view>
+      <view class="diagnosis-micro-tip">系统总现值由『现金流底表』与『折现假设』共同驱动：</view>
+      <view class="diagnosis-action-row">
+        <view class="action-btn-primary" bindtap="goToSheetTab">🛠️ 校准现金流底表</view>
+        <view class="action-btn-secondary" bindtap="goToLabTab">🧪 调整折现假设 (r/g)</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- TAB 1: 现金流底表 -->
+  <view wx:if="{{activeTab === 1}}" class="tab-content">
+    <!-- 1. 职业与自营收入流 -->
+    <view class="sheet-section">
+      <view class="section-top">
+        <text class="section-title">💼 职业与自营收入流 ({{profile.incomeStreams.length || 0}}项)</text>
+        <text class="add-btn" bindtap="openAddStreamModal">+ 添加收入流</text>
+      </view>
+      <view wx:for="{{profile.incomeStreams}}" wx:key="id" class="stream-item">
+        <view class="stream-info">
+          <view class="stream-title-row">
+            <text class="stream-name">{{item.name}}</text>
+            <text wx:if="{{item.supportsTerminalValue}}" class="stream-badge-tv">终值造血</text>
+          </view>
+          <text class="stream-desc">{{item.annualAmount / 10000}}万/年 · {{item.startAge}}–{{item.endAge}}岁 (维护费{{item.maintenanceCost}}元/年)</text>
+        </view>
+        <view class="stream-action">
+          <text class="edit-btn" data-id="{{item.id}}" bindtap="openEditStreamModal">编辑</text>
+          <text class="del-btn" data-id="{{item.id}}" bindtap="removeStream">删除</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 2. 刚性支出清单 (支持新增、编辑、删除) -->
+    <view class="sheet-section">
+      <view class="section-top">
+        <text class="section-title">🏠 刚性支出与房贷 ({{profile.expenses.length || 0}}项)</text>
+        <text class="add-btn" bindtap="openAddExpenseModal">+ 添加支出项</text>
+      </view>
+      <view wx:for="{{profile.expenses}}" wx:key="id" class="stream-item">
+        <view class="stream-info">
+          <text class="stream-name">{{item.name}}</text>
+          <text class="stream-desc">{{item.annualAmount / 10000}}万/年 · 持续至 {{item.endAge}} 岁</text>
+        </view>
+        <view class="stream-action">
+          <text class="edit-btn" data-id="{{item.id}}" bindtap="openEditExpenseModal">编辑</text>
+          <text class="del-btn" data-id="{{item.id}}" bindtap="removeExpense">删除</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 3. 资产法与收益法防双计 (支持新增、编辑、删除) -->
+    <view class="sheet-section">
+      <view class="section-top">
+        <view class="title-with-help">
+          <text class="section-title">🏦 资产与负债 ({{profile.assets.length || 0}}项)</text>
+          <text class="help-circle" bindtap="showNavHelpModal">?</text>
+        </view>
+        <text class="add-btn" bindtap="openAddAssetModal">+ 添加资产</text>
+      </view>
+      <view wx:for="{{profile.assets}}" wx:key="id" class="stream-item">
+        <view class="stream-info">
+          <view class="stream-title-row">
+            <text class="stream-name">{{item.name}}</text>
+            <text class="stream-badge-nav">{{item.valuationMethod === 'nav' ? '资产法(NAV)' : '收益法(DCF)'}}</text>
+          </view>
+          <text class="stream-desc">保守净值 {{item.conservativeValue / 10000}}万</text>
+        </view>
+        <view class="stream-action">
+          <text class="edit-btn" data-id="{{item.id}}" bindtap="openEditAssetModal">编辑</text>
+          <text class="del-btn" data-id="{{item.id}}" bindtap="removeAsset">删除</text>
+        </view>
+      </view>
+    </view>
+
+    <button class="secondary-button" bindtap="resetAll">恢复默认底表数据</button>
+  </view>
+
+  <!-- TAB 2: 假设实验室 -->
+  <view wx:if="{{activeTab === 2}}" class="tab-content">
+    <view class="lab-card">
+      <view class="slider-group">
+        <view class="slider-header">
+          <text>风险调整折现率 r (步长 0.1%)</text>
+          <text class="slider-val">{{displayDiscountRate}}</text>
+        </view>
+        <slider min="20" max="70" step="1" value="{{discountRateSlider}}" data-field="discountRate" bindchange="onRateChange" activeColor="#173f36"></slider>
+        <view class="slider-tip">包含时间价值与个人职业中断风险；折现率越高，系统现值越保守。</view>
+      </view>
+
+      <view class="slider-group">
+        <view class="slider-header">
+          <text>长期保守增长率 g (步长 0.1%)</text>
+          <text class="slider-val">{{displayGrowthRate}}</text>
+        </view>
+        <slider min="0" max="20" step="1" value="{{terminalGrowthRateSlider}}" data-field="terminalGrowthRate" bindchange="onRateChange" activeColor="#173f36"></slider>
+        <view class="slider-tip">仅适用于独立持续造血引擎；受 r > g 与宏观经济上限约束。</view>
+
+        <!-- 当无造血资产时的醒目琥珀色说明卡片 -->
+        <view wx:if="{{!hasTvEngine}}" class="g-inactive-alert">
+          <view class="g-alert-header">
+            <text class="g-alert-icon">⚠️</text>
+            <text class="g-alert-title">当前增长率 g 未生效说明</text>
+          </view>
+          <view class="g-alert-desc">
+            永续增长率 g 仅对脱离个人打卡的“独立持续造血资产”（如出租物业、自营分红、版权订阅）生效。你当前底表均为肉身打卡工薪与固定养老金，因此调整 g 现值保持不变。
+          </view>
+          <view class="g-alert-action" bindtap="goToAddTvStream">
+            <text class="g-alert-btn">+ 去底表配置一项造血资产 →</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 敏感性热力图矩阵 (实时联动，无需刷新按钮) -->
+    <view class="matrix-section" wx:if="{{sensitivityResult}}">
+      <view class="matrix-title">
+        r × g 敏感性热力矩阵 (系统总现值·万元)
+        <text wx:if="{{!hasTvEngine}}" class="matrix-inactive-sub">（当前无终值资产，各 g 档位现值持平）</text>
+      </view>
+      <view class="matrix-table">
+        <view class="matrix-row header">
+          <view class="matrix-cell th">r \ g</view>
+          <view wx:for="{{sensitivityResult.gLabels}}" wx:key="*this" class="matrix-cell th">{{item}}</view>
+        </view>
+        <view wx:for="{{sensitivityResult.matrix}}" wx:key="r" class="matrix-row">
+          <view class="matrix-cell row-th">{{item.rLabel}}</view>
+          <view wx:for="{{item.values}}" wx:key="g" wx:for-item="cell" class="matrix-cell heat-{{cell.heatLevel}} {{cell.isCenter ? 'is-center' : ''}} {{cell.invalid ? 'invalid' : ''}}">
+            <text class="cell-text">{{cell.displayWan}}</text>
+            <text wx:if="{{cell.isCenter}}" class="center-tag">当前</text>
+          </view>
+        </view>
+      </view>
+      <view class="matrix-note">
+        矩阵随滑块实时居中更新。颜色越深代表估值越充沛；金框标明当前选定假设。
+      </view>
+    </view>
+
+    <!-- r 与 g 的概念普及（已移至假设实验室最后） -->
+    <view class="concept-intro-card">
+      <view class="concept-item">
+        <text class="concept-title">📌 折现率 r (时间价值与中断风险)</text>
+        <text class="concept-desc">给未来打折的程度。现在的 100 元比 10 年后更值钱；r 由无风险收益（约 2%）+ 个人收入中断/健康风险溢价构成。r 设得越高，远期收入折现缩水越严重。</text>
+      </view>
+      <view class="concept-item">
+        <text class="concept-title">🌱 永续增长率 g (脱离打卡能力)</text>
+        <text class="concept-desc">仅适用于能脱离肉身打卡的独立造血业务。宏观上任何资产永续增速都不应超过 GDP 名义增速（0%~1.5%），且必须受严格数学约束 r > g。</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- TAB 3: 目标倒推与现实检验 -->
+  <view wx:if="{{activeTab === 3 && reverseResult}}" class="tab-content">
+    <!-- 1. 目标设定滑块 -->
+    <view class="goal-slider-box">
+      <view class="slider-header">
+        <text class="goal-label">设定目标系统现值 V*</text>
+        <text class="goal-val edit-target" bindtap="openTargetInputModal">{{targetValueWan}} 万元 ✎</text>
+      </view>
+      <slider min="50" max="1000" step="10" value="{{targetValueWan}}" bindchange="onTargetSlider" activeColor="#173f36"></slider>
+      <view class="gap-row">
+        <text>现有系统现值：{{reverseResult.vKnownWan}}万</text>
+        <text class="gap-text">价值缺口：{{reverseResult.gapWan}}万</text>
+      </view>
+    </view>
+
+    <!-- 2. 现实检验清单 -->
+    <view class="checklist-card">
+      <view class="checklist-header">
+        <view class="checklist-title">📋 现实检验清单 (Reality Check)</view>
+        <view class="checklist-sub">勾选你当前已具备的现实支撑：</view>
+      </view>
+      <view class="check-item" data-key="hasCustomerBase" bindtap="toggleRealityCheck">
+        <text class="checkbox {{profile.targetGoal.realityCheck.hasCustomerBase ? 'checked' : ''}}">{{profile.targetGoal.realityCheck.hasCustomerBase ? '✓' : ''}}</text>
+        <text class="check-label">这一目标是否有明确的合同、专业技能或客户基础？</text>
+      </view>
+      <view class="check-item" data-key="canAffordReinvestment" bindtap="toggleRealityCheck">
+        <text class="checkbox {{profile.targetGoal.realityCheck.canAffordReinvestment ? 'checked' : ''}}">{{profile.targetGoal.realityCheck.canAffordReinvestment ? '✓' : ''}}</text>
+        <text class="check-label">每周能否投入 10+ 小时精力与必要再投资资金维护？</text>
+      </view>
+      <view class="check-item" data-key="zeroGrowthTested" bindtap="toggleRealityCheck">
+        <text class="checkbox {{profile.targetGoal.realityCheck.zeroGrowthTested ? 'checked' : ''}}">{{profile.targetGoal.realityCheck.zeroGrowthTested ? '✓' : ''}}</text>
+        <text class="check-label">若长期增长率降为 0%，该目标是否依然具备容错空间？</text>
+      </view>
+      <view class="check-item" data-key="delayTolerance" bindtap="toggleRealityCheck">
+        <text class="checkbox {{profile.targetGoal.realityCheck.delayTolerance ? 'checked' : ''}}">{{profile.targetGoal.realityCheck.delayTolerance ? '✓' : ''}}</text>
+        <text class="check-label">即使目标收入延迟 3 年才兑现，系统不会陷入现金流中断？</text>
+      </view>
+    </view>
+
+    <!-- 3. 苛刻度评级徽标 -->
+    <view class="severity-card" style="border-left-color: {{reverseResult.severity.color}};">
+      <view class="severity-badge" style="background: {{reverseResult.severity.color}};">{{reverseResult.severity.badge}}</view>
+      <view class="severity-title">{{reverseResult.severity.title}}</view>
+      <view class="severity-reasons">
+        <view wx:for="{{reverseResult.severity.reasons}}" wx:key="*this" class="reason-item">• {{item}}</view>
+      </view>
+      <view class="severity-advice">建议：{{reverseResult.severity.advice}}</view>
+    </view>
+
+    <!-- 4. 三条等价值路径卡片（可折叠） -->
+    <view class="paths-collapse-bar" bindtap="togglePathsExpanded">
+      <view class="collapse-bar-left">
+        <text class="collapse-bar-title">💡 3 条等价值实现路径（反向求解）</text>
+        <text class="collapse-bar-sub">职场增收 · 造血业务 · 刚性储蓄</text>
+      </view>
+      <text class="collapse-arrow {{isPathsExpanded ? 'arrow-up' : ''}}">▼</text>
+    </view>
+
+    <view wx:if="{{isPathsExpanded}}" class="paths-expanded-content">
+      <view class="path-card">
+        <view class="path-name">🚀 {{reverseResult.paths.laborPath.name}}</view>
+        <view class="path-highlight">每年额外需产生净 PFCF：约 {{reverseResult.paths.laborPath.annualWan}} 万元</view>
+        <view class="path-desc">在剩余 {{reverseResult.paths.laborPath.years}} 年工作期内，考虑时间价值折现后，每年需多存留/多赚约 {{reverseResult.paths.laborPath.annualWan}} 万元自由现金流，折现至当下刚好填补 {{reverseResult.gapWan}} 万现值缺口。</view>
+      </view>
+
+      <view class="path-card">
+        <view class="path-name">⚙️ {{reverseResult.paths.enginePath.name}}</view>
+        <view class="path-highlight">退休前培育独立造血分红：约 {{reverseResult.paths.enginePath.annualWan}} 万元/年</view>
+        <view class="path-desc">在退休时点建立年净分红约 {{reverseResult.paths.enginePath.annualWan}} 万元的造血业务，通过 Gordon 终值模型折现至当下，等效填补 {{reverseResult.gapWan}} 万现值缺口。</view>
+      </view>
+
+      <view class="path-card">
+        <view class="path-name">🌱 {{reverseResult.paths.savingsPath.name}}</view>
+        <view class="path-highlight">每月需额外刚性储蓄定投：约 {{reverseResult.paths.savingsPath.monthlyAmount}} 元/月</view>
+        <view class="path-desc">按月度利率复利滚存，每月刚性储蓄定投约 {{reverseResult.paths.savingsPath.monthlyAmount}} 元，至退休时累计本息折现等价填补 {{reverseResult.gapWan}} 万缺口。</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 浮动弹窗 1：添加 / 编辑收入流 -->
+  <view wx:if="{{showAddStreamModal}}" class="modal-mask">
+    <view class="modal-box">
+      <view class="modal-title">{{isEditingStream ? '编辑收入流' : '添加收入流'}}</view>
+
+      <!-- 1. 收入流类型 -->
+      <view class="form-group">
+        <view class="form-label">收入类型</view>
+        <view class="kind-pill-row">
+          <view wx:for="{{streamKinds}}" wx:key="id" class="kind-pill {{newStream.kind === item.id ? 'active' : ''}}" data-kind="{{item.id}}" bindtap="selectStreamKind">
+            {{item.label}}
+          </view>
+        </view>
+      </view>
+
+      <!-- 2. 收入流名称 -->
+      <view class="form-group">
+        <view class="form-label">收入流名称</view>
+        <input class="modal-input" placeholder="输入名称 (如副业顾问、项目分红)" placeholder-class="input-placeholder-gray" value="{{newStream.name}}" data-field="name" bindinput="onNewStreamInput" />
+      </view>
+
+      <!-- 3. 年到手净收入 -->
+      <view class="form-group">
+        <view class="form-label-row">
+          <text class="form-label">年到手净收入 (元)</text>
+          <text class="form-tip">税后实际到手</text>
+        </view>
+        <input class="modal-input" type="number" placeholder="如 50000" placeholder-class="input-placeholder-gray" value="{{newStream.annualAmount}}" data-field="annualAmount" bindinput="onNewStreamInput" />
+        <view class="quick-pill-row">
+          <view class="quick-pill {{newStream.annualAmount == 50000 ? 'active' : ''}}" data-val="50000" bindtap="selectAmountQuick">5万</view>
+          <view class="quick-pill {{newStream.annualAmount == 100000 ? 'active' : ''}}" data-val="100000" bindtap="selectAmountQuick">10万</view>
+          <view class="quick-pill {{newStream.annualAmount == 200000 ? 'active' : ''}}" data-val="200000" bindtap="selectAmountQuick">20万</view>
+          <view class="quick-pill {{newStream.annualAmount == 300000 ? 'active' : ''}}" data-val="300000" bindtap="selectAmountQuick">30万</view>
+          <view class="quick-pill {{newStream.annualAmount == 500000 ? 'active' : ''}}" data-val="500000" bindtap="selectAmountQuick">50万</view>
+        </view>
+      </view>
+
+      <!-- 4. 年必要维护成本 -->
+      <view class="form-group">
+        <view class="form-label-row">
+          <text class="form-label">年必要维护成本 (元)</text>
+          <text class="form-tip">耗材/考证/服务器费用</text>
+        </view>
+        <input class="modal-input" type="number" placeholder="若无填 0" placeholder-class="input-placeholder-gray" value="{{newStream.maintenanceCost}}" data-field="maintenanceCost" bindinput="onNewStreamInput" />
+        <view class="quick-pill-row">
+          <view class="quick-pill {{newStream.maintenanceCost == 0 ? 'active' : ''}}" data-val="0" bindtap="selectMaintenanceQuick">0 (工薪)</view>
+          <view class="quick-pill {{newStream.maintenanceCost == 2000 ? 'active' : ''}}" data-val="2000" bindtap="selectMaintenanceQuick">2000</view>
+          <view class="quick-pill {{newStream.maintenanceCost == 5000 ? 'active' : ''}}" data-val="5000" bindtap="selectMaintenanceQuick">5000</view>
+          <view class="quick-pill {{newStream.maintenanceCost == 10000 ? 'active' : ''}}" data-val="10000" bindtap="selectMaintenanceQuick">1万</view>
+          <view class="quick-pill {{newStream.maintenanceCost == 20000 ? 'active' : ''}}" data-val="20000" bindtap="selectMaintenanceQuick">2万</view>
+        </view>
+      </view>
+
+      <!-- 5. 生效年龄区间 -->
+      <view class="form-group">
+        <view class="form-label-row">
+          <text class="form-label">生效年龄区间</text>
+          <text class="form-tip">产生收入的起止年龄</text>
+        </view>
+        <view class="modal-row">
+          <input class="modal-input half" type="number" placeholder="起始年龄" placeholder-class="input-placeholder-gray" value="{{newStream.startAge}}" data-field="startAge" bindinput="onNewStreamInput" />
+          <text class="age-separator">至</text>
+          <input class="modal-input half" type="number" placeholder="截止年龄" placeholder-class="input-placeholder-gray" value="{{newStream.endAge}}" data-field="endAge" bindinput="onNewStreamInput" />
+        </view>
+        <view class="quick-pill-row">
+          <view class="quick-pill" data-type="retire" bindtap="selectEndAgeQuick">至法定退休({{profile.expectedRetirementAge}}岁)</view>
+          <view class="quick-pill" data-type="life" bindtap="selectEndAgeQuick">至终身(82岁)</view>
+          <view class="quick-pill" data-type="cliff" bindtap="selectEndAgeQuick">未来5年({{profile.currentAge + 5}}岁)</view>
+        </view>
+      </view>
+
+      <!-- 6. 脱离打卡造血能力 -->
+      <view class="form-group switch-group">
+        <view class="switch-left">
+          <view class="form-label">脱离打卡独立造血</view>
+          <view class="form-tip">开启后，退休后将纳入严格终值（Gordon永续模型）折现</view>
+        </view>
+        <switch checked="{{newStream.supportsTerminalValue}}" bindchange="onTerminalSwitch" color="#173f36" />
+      </view>
+
+      <!-- 紧凑小按钮 -->
+      <view class="modal-actions">
+        <view class="modal-btn cancel" bindtap="closeAddStreamModal">取消</view>
+        <view class="modal-btn confirm" bindtap="confirmAddStream">保存</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 浮动弹窗 2：添加 / 编辑刚性支出 -->
+  <view wx:if="{{showExpenseModal}}" class="modal-mask">
+    <view class="modal-box">
+      <view class="modal-title">{{isEditingExpense ? '编辑刚性支出' : '添加刚性支出'}}</view>
+
+      <view class="form-group">
+        <view class="form-label">支出类别</view>
+        <view class="kind-pill-row">
+          <view wx:for="{{expenseCategories}}" wx:key="id" class="kind-pill {{expenseForm.category === item.id ? 'active' : ''}}" data-category="{{item.id}}" bindtap="selectExpenseCategory">
+            {{item.label}}
+          </view>
+        </view>
+      </view>
+
+      <view class="form-group">
+        <view class="form-label">支出项名称</view>
+        <input class="modal-input" placeholder="输入名称 (如房贷月供、日常生活)" placeholder-class="input-placeholder-gray" value="{{expenseForm.name}}" data-field="name" bindinput="onExpenseInput" />
+      </view>
+
+      <view class="form-group">
+        <view class="form-label-row">
+          <text class="form-label">年刚性支出金额 (元)</text>
+          <text class="form-tip">可支配口径将自动扣除</text>
+        </view>
+        <input class="modal-input" type="number" placeholder="如 36000" placeholder-class="input-placeholder-gray" value="{{expenseForm.annualAmount}}" data-field="annualAmount" bindinput="onExpenseInput" />
+        <view class="quick-pill-row">
+          <view class="quick-pill {{expenseForm.annualAmount == 24000 ? 'active' : ''}}" data-val="24000" bindtap="selectExpenseAmountQuick">2.4万</view>
+          <view class="quick-pill {{expenseForm.annualAmount == 36000 ? 'active' : ''}}" data-val="36000" bindtap="selectExpenseAmountQuick">3.6万</view>
+          <view class="quick-pill {{expenseForm.annualAmount == 48000 ? 'active' : ''}}" data-val="48000" bindtap="selectExpenseAmountQuick">4.8万</view>
+          <view class="quick-pill {{expenseForm.annualAmount == 60000 ? 'active' : ''}}" data-val="60000" bindtap="selectExpenseAmountQuick">6万</view>
+          <view class="quick-pill {{expenseForm.annualAmount == 120000 ? 'active' : ''}}" data-val="120000" bindtap="selectExpenseAmountQuick">12万</view>
+        </view>
+      </view>
+
+      <view class="form-group">
+        <view class="form-label-row">
+          <text class="form-label">支出持续年龄段</text>
+          <text class="form-tip">还款或支出的起止年龄</text>
+        </view>
+        <view class="modal-row">
+          <input class="modal-input half" type="number" placeholder="起始年龄" placeholder-class="input-placeholder-gray" value="{{expenseForm.startAge}}" data-field="startAge" bindinput="onExpenseInput" />
+          <text class="age-separator">至</text>
+          <input class="modal-input half" type="number" placeholder="截止年龄" placeholder-class="input-placeholder-gray" value="{{expenseForm.endAge}}" data-field="endAge" bindinput="onExpenseInput" />
+        </view>
+        <view class="quick-pill-row">
+          <view class="quick-pill" data-type="10yr" bindtap="selectExpenseEndAgeQuick">未来10年</view>
+          <view class="quick-pill" data-type="20yr" bindtap="selectExpenseEndAgeQuick">未来20年 (房贷周期)</view>
+          <view class="quick-pill" data-type="life" bindtap="selectExpenseEndAgeQuick">终身基本生活(82岁)</view>
+        </view>
+      </view>
+
+      <view class="modal-actions">
+        <view class="modal-btn cancel" bindtap="closeExpenseModal">取消</view>
+        <view class="modal-btn confirm" bindtap="confirmExpense">保存</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 浮动弹窗 3：添加 / 编辑资产负债 -->
+  <view wx:if="{{showAssetModal}}" class="modal-mask">
+    <view class="modal-box">
+      <view class="modal-title">{{isEditingAsset ? '编辑资产' : '添加资产'}}</view>
+
+      <view class="form-group">
+        <view class="form-label">计价估值方法 (防双重计价核心)</view>
+        <view class="kind-pill-row">
+          <view wx:for="{{assetMethods}}" wx:key="id" class="kind-pill {{assetForm.valuationMethod === item.id ? 'active' : ''}}" data-method="{{item.id}}" bindtap="selectAssetMethod">
+            {{item.label}}
+          </view>
+        </view>
+        <view class="form-tip-box">
+          {{assetForm.valuationMethod === 'nav' ? '资产法 (NAV)：按当前保守清算变现价值计入总现值；该资产不可再折现未来现金流。' : '收益法 (DCF)：该资产产生的租金/分红已在收入流中折现，禁止再计入净资产本金！'}}
+        </view>
+      </view>
+
+      <view class="form-group">
+        <view class="form-label">资产名称</view>
+        <input class="modal-input" placeholder="输入名称 (如流动定存、自住房屋)" placeholder-class="input-placeholder-gray" value="{{assetForm.name}}" data-field="name" bindinput="onAssetInput" />
+      </view>
+
+      <view class="form-group">
+        <view class="form-label-row">
+          <text class="form-label">保守变现净值 (元)</text>
+          <text class="form-tip">资产法口径计入NAV</text>
+        </view>
+        <input class="modal-input" type="number" placeholder="如 100000" placeholder-class="input-placeholder-gray" value="{{assetForm.conservativeValue}}" data-field="conservativeValue" bindinput="onAssetInput" />
+        <view class="quick-pill-row">
+          <view class="quick-pill {{assetForm.conservativeValue == 50000 ? 'active' : ''}}" data-val="50000" bindtap="selectAssetValQuick">5万</view>
+          <view class="quick-pill {{assetForm.conservativeValue == 100000 ? 'active' : ''}}" data-val="100000" bindtap="selectAssetValQuick">10万</view>
+          <view class="quick-pill {{assetForm.conservativeValue == 500000 ? 'active' : ''}}" data-val="500000" bindtap="selectAssetValQuick">50万</view>
+          <view class="quick-pill {{assetForm.conservativeValue == 1000000 ? 'active' : ''}}" data-val="1000000" bindtap="selectAssetValQuick">100万</view>
+          <view class="quick-pill {{assetForm.conservativeValue == 2000000 ? 'active' : ''}}" data-val="2000000" bindtap="selectAssetValQuick">200万</view>
+        </view>
+      </view>
+
+      <view class="modal-actions">
+        <view class="modal-btn cancel" bindtap="closeAssetModal">取消</view>
+        <view class="modal-btn confirm" bindtap="confirmAsset">保存</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 浮动弹窗 4：设定目标系统现值 (风格与收入流弹窗完全一致，带不占位灰色提示) -->
+  <view wx:if="{{showTargetModal}}" class="modal-mask">
+    <view class="modal-box compact">
+      <view class="modal-title">设定目标系统现值 V*</view>
+
+      <view class="form-group">
+        <view class="form-label-row">
+          <text class="form-label">目标现值 (万元)</text>
+          <text class="form-tip">单位：万元</text>
+        </view>
+        <input
+          class="modal-input"
+          type="number"
+          placeholder="请输入目标总现值 (万元)"
+          placeholder-class="input-placeholder-gray"
+          value="{{targetInputWan}}"
+          bindinput="onTargetInputChange"
+        />
+        <view class="quick-pill-row">
+          <view class="quick-pill {{targetInputWan == '150' ? 'active' : ''}}" data-val="150" bindtap="selectTargetQuick">150万</view>
+          <view class="quick-pill {{targetInputWan == '200' ? 'active' : ''}}" data-val="200" bindtap="selectTargetQuick">200万</view>
+          <view class="quick-pill {{targetInputWan == '300' ? 'active' : ''}}" data-val="300" bindtap="selectTargetQuick">300万</view>
+          <view class="quick-pill {{targetInputWan == '500' ? 'active' : ''}}" data-val="500" bindtap="selectTargetQuick">500万</view>
+          <view class="quick-pill {{targetInputWan == '800' ? 'active' : ''}}" data-val="800" bindtap="selectTargetQuick">800万</view>
+          <view class="quick-pill {{targetInputWan == '1000' ? 'active' : ''}}" data-val="1000" bindtap="selectTargetQuick">1000万</view>
+        </view>
+      </view>
+
+      <view class="modal-actions">
+        <view class="modal-btn cancel" bindtap="closeTargetModal">取消</view>
+        <view class="modal-btn confirm" bindtap="confirmTargetInput">确认设定</view>
+      </view>
+    </view>
+  </view>
+</view>

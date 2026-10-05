@@ -5,6 +5,6 @@
   "description": "本地优先的微信小程序：未来收入地图",
   "scripts": {
     "test": "node --test test/**/*.test.js",
-    "check": "node --check miniprogram/utils/quick-engine.js && node --check miniprogram/utils/storage.js"
+    "check": "node --check miniprogram/utils/quick-engine.js && node --check miniprogram/utils/retirement.js && node --check miniprogram/utils/workbench-engine.js && node --check miniprogram/utils/storage.js"
   }
 }

@@ -1,24 +1,156 @@
 <view class="page result-page" wx:if="{{result}}">
-  <view class="eyebrow">你的未来收入地图</view>
-  <view class="result-heading">{{result.trajectory.title}}</view>
-  <view class="body summary">{{result.trajectory.description}}</view>
-  <view class="income-card" wx:if="{{hasIncome}}">
-    <view class="income-caption">按今天购买力折算的未来十年职业收入情景</view>
-    <view class="scenario"><text>有压力时</text><text>{{result.displayIncome.bear}}</text></view>
-    <view class="scenario base"><text>按当前底盘</text><text>{{result.displayIncome.base}}</text></view>
-    <view wx:if="{{result.displayIncome.confirmed}}" class="scenario"><text>计入已确认变化</text><text>{{result.displayIncome.confirmed}}</text></view>
-    <view wx:else class="scenario unavailable"><text>未来上行</text><text>需要先验证</text></view>
-    <view class="income-note">默认不假设长期增长；已确认变化只影响前两年。这不包含资产、债务、投资收益或生活支出。</view>
+  <view class="eyebrow">个人现金流 DCF 实验室</view>
+  <view class="result-heading">你的收入系统，主要依靠：</view>
+
+  <!-- 动态人设核心标签与俏皮解读卡片 -->
+  <view class="persona-card">
+    <view class="persona-header">
+      <text class="persona-badge-title">{{result.persona.badge}}</text>
+      <text class="persona-tagline">{{result.persona.tagline}}</text>
+    </view>
+    <view class="persona-quote-body">
+      {{result.persona.summary}}
+    </view>
   </view>
-  <view class="qualitative-card" wx:else>
-    <view class="income-caption">你选择了不透露收入</view>
-    <view class="qualitative-title">仍然可以先看路径与稳定性</view>
-    <view class="income-note">当前收入稳定性：{{result.stability}}。未来可以随时补充收入区间，重新生成金额范围。</view>
+
+  <!-- 核心指标看板：突出最大占比 -->
+  <view class="metrics-grid">
+    <!-- 主卡：突出显示最大支柱 -->
+    <view class="metric-card primary" wx:if="{{result.persona.dominantPillar === 'working'}}">
+      <view class="metric-tag">最大核心支柱</view>
+      <view class="metric-value">{{result.dcf.ratios.workingRatio}}%</view>
+      <view class="metric-label">工作期现值 (肉身打卡)</view>
+      <view class="metric-hint">工作至 {{result.expectedRetirementAge}} 岁截止</view>
+    </view>
+    <view class="metric-card primary" wx:elif="{{result.persona.dominantPillar === 'pension'}}">
+      <view class="metric-tag">最大核心支柱</view>
+      <view class="metric-value">{{result.dcf.ratios.postRetirementRatio}}%</view>
+      <view class="metric-label">退休后年金现值 (养老金)</view>
+      <view class="metric-hint">国家制度保障兜底后半生</view>
+    </view>
+    <view class="metric-card primary" wx:elif="{{result.persona.dominantPillar === 'strictTv'}}">
+      <view class="metric-tag">最大核心支柱</view>
+      <view class="metric-value">{{result.dcf.ratios.strictTvRatio}}%</view>
+      <view class="metric-label">严格终值现值 (Gordon TV)</view>
+      <view class="metric-hint">源自独立持续造血引擎</view>
+    </view>
+    <view class="metric-card primary" wx:else>
+      <view class="metric-tag">势均力敌</view>
+      <view class="metric-value">{{result.dcf.ratios.workingRatio}}%</view>
+      <view class="metric-label">工作期现金流现值</view>
+      <view class="metric-hint">与后半场养老保障平衡</view>
+    </view>
+
+    <!-- 副卡：退休后现金流占比 -->
+    <view class="metric-card secondary">
+      <view class="metric-tag">关键参考指标</view>
+      <view class="metric-value">{{result.dcf.ratios.postWorkTotalRatio}}%</view>
+      <view class="metric-label">退休后现金流占比</view>
+      <view class="metric-hint">退休后全部收益现值占比</view>
+    </view>
   </view>
-  <view class="action-preview"><text class="preview-label">此刻可以先做</text><text class="preview-title">{{result.actions[0].title}}</text><text class="preview-body">{{result.actions[0].firstStep}}</text></view>
-  <button class="primary-button" bindtap="openActions">看看我能做什么</button>
-  <button class="secondary-button share" bindtap="openShare">生成不含金额的分享卡</button>
-  <view class="links"><text bindtap="edit">修改回答</text><text bindtap="explain">它是怎么算的？</text></view>
-  <view class="upgrade" bindtap="upgrade"><text class="upgrade-title">想继续看安全垫、房贷和转行选择？</text><text class="upgrade-link">建立我的财务实验室（即将开放） →</text></view>
+
+  <!-- 现金流三段式结构堆叠图 -->
+  <view class="structure-card">
+    <view class="card-caption">个人现金流系统三段式结构</view>
+    <view class="stacked-bar">
+      <view class="bar-seg working" style="width: {{result.dcf.ratios.workingRatio}}%"></view>
+      <view class="bar-seg pension" style="width: {{result.dcf.ratios.postRetirementRatio}}%"></view>
+      <view class="bar-seg tv" style="width: {{result.dcf.ratios.strictTvRatio}}%"></view>
+    </view>
+
+    <view class="breakdown-list">
+      <view class="breakdown-item">
+        <view class="item-left">
+          <view class="dot working-dot"></view>
+          <text class="item-name">工作期现金流现值</text>
+        </view>
+        <view class="item-right">
+          <text class="item-ratio">{{result.dcf.ratios.workingRatio}}%</text>
+          <text wx:if="{{hasMoney}}" class="item-amount">{{result.displayDcf.workingPv}}</text>
+        </view>
+      </view>
+
+      <view class="breakdown-item">
+        <view class="item-left">
+          <view class="dot pension-dot"></view>
+          <text class="item-name">退休后有限期现金流</text>
+        </view>
+        <view class="item-right">
+          <text class="item-ratio">{{result.dcf.ratios.postRetirementRatio}}%</text>
+          <text wx:if="{{hasMoney}}" class="item-amount">约 {{result.displayDcf.postRetirePv}}</text>
+        </view>
+      </view>
+
+      <view class="breakdown-item">
+        <view class="item-left">
+          <view class="dot tv-dot"></view>
+          <text class="item-name">严格终值现值 (TV)</text>
+        </view>
+        <view class="item-right">
+          <text class="item-ratio">{{result.dcf.ratios.strictTvRatio}}%</text>
+          <text wx:if="{{hasMoney}}" class="item-amount">{{result.displayDcf.strictTvPv === '0' ? '无' : result.displayDcf.strictTvPv}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 收入断崖特别预警（失业风险高时触发） -->
+  <view wx:if="{{hasCliff}}" class="cliff-alert">
+    <view class="alert-header">
+      <text class="alert-icon">⚠️</text>
+      <text class="alert-title">职业收入断崖预警</text>
+    </view>
+    <view class="alert-content">
+      在“失业风险较高”设定下，劳动现金流仅计入未来 5 年（至 {{result.currentAge + 5}} 岁）。
+      距离法定退休年龄（{{result.statutoryRetirementAge}} 岁）有长达 <text class="bold">{{result.dcf.cliff.cliffYears}} 年</text> 的劳动收入真空期。
+    </view>
+    <view class="alert-foot">
+      这导致工作期现值大幅缩水，凸显出提前建立现金安全垫与独立收入系统的必要性。
+    </view>
+  </view>
+
+  <!-- 总金额卡片（若透露收入） -->
+  <view wx:if="{{hasMoney}}" class="total-pv-card">
+    <view class="total-caption">当前假设下的收入系统现值约为</view>
+    <view class="total-amount">{{result.displayDcf.totalPv}}</view>
+    <view class="total-note">
+      按今天购买力折算（折现率 3.5%）。这是整个收入系统的现金流折现估算，绝非个人身价或人生定价。
+    </view>
+  </view>
+
+  <!-- 行动预览 -->
+  <view class="action-preview" wx:if="{{result.actions && result.actions.length > 0}}">
+    <text class="preview-label">收入系统优化实验</text>
+    <text class="preview-title">{{result.actions[0].title}}</text>
+    <text class="preview-body">{{result.actions[0].firstStep}}</text>
+  </view>
+
+  <!-- 底部操作按钮 -->
+  <button class="primary-button" bindtap="openShare">生成不含金额的分享卡</button>
+  <button class="secondary-button" bindtap="openActions">查看现金流行动清单</button>
+
+  <view class="links">
+    <text bindtap="edit">修改测算假设</text>
+    <text bindtap="explain">它是怎么算的？</text>
+  </view>
+
+  <!-- 目标倒推迷你试玩滑块 (Hook to Advanced Workbench) -->
+  <view class="reverse-hook-card">
+    <view class="hook-title">🎯 目标价值倒推（反向 DCF 试玩）</view>
+    <view class="hook-desc">
+      当前系统估算现值约为 {{result.dcf.totalPv ? result.dcf.totalPv.mid / 10000 : 60}} 万元。拖动滑块设定你的财务目标：
+    </view>
+    <view class="hook-slider-row">
+      <text class="hook-target-val">目标：{{trialTargetWan}} 万元</text>
+      <text class="hook-gap-val">缺口：{{trialGapWan}} 万</text>
+    </view>
+    <slider min="100" max="600" step="20" value="{{trialTargetWan}}" bindchange="onTrialSlider" activeColor="#173f36"></slider>
+    <view class="hook-result-preview">
+      👉 初步推导：实现该目标，大致需要【每月多存 {{trialMonthlySavings}} 元】或【退休前培育一项年分红约 {{trialSideIncomeWan}} 万的副业】。
+    </view>
+    <button class="primary-button hook-btn" bindtap="openWorkbench">进入 DCF 进阶工作台（解锁多收入底表与三路径） →</button>
+  </view>
+
   <view class="notice result-notice">{{result.disclosures[0]}}</view>
 </view>

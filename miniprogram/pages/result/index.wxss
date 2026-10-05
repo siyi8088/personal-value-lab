@@ -1,1 +1,379 @@
-.result-heading { margin-top:16rpx; font-size:54rpx; font-weight:700; }.summary { margin-top:15rpx; }.income-card,.qualitative-card { margin:44rpx 0 24rpx; padding:32rpx; border-radius:28rpx; background:#173f36; color:#fff; }.income-caption { color:#c7ddd3; font-size:24rpx; }.scenario { display:flex; justify-content:space-between; padding:23rpx 0; border-bottom:1rpx solid rgba(255,255,255,.18); color:#dceae3; font-size:27rpx; }.scenario text:last-child { font-size:31rpx; font-weight:600; color:#fff; }.scenario.base { margin:0 -12rpx; padding:23rpx 12rpx; border-radius:12rpx; background:#286b5d; }.scenario.unavailable text:last-child { color:#c8e3d7; font-size:27rpx; font-weight:400; }.income-note { margin-top:22rpx; color:#b7cec4; font-size:22rpx; line-height:1.55; }.qualitative-title { margin:16rpx 0; font-size:34rpx; font-weight:600; }.action-preview { margin:28rpx 0; padding:28rpx; border-radius:22rpx; background:#e7efe8; display:flex; flex-direction:column; }.preview-label { color:#5b766d; font-size:23rpx; }.preview-title { margin-top:12rpx; font-size:33rpx; font-weight:700; }.preview-body { margin-top:12rpx; color:#52655f; font-size:26rpx; line-height:1.55; }.share { margin-top:16rpx; }.links { display:flex; justify-content:center; gap:42rpx; margin:30rpx 0; color:#1d5d50; font-size:26rpx; text-decoration:underline; }.upgrade { margin-top:20rpx; padding:28rpx; border:2rpx solid #c9d9ce; border-radius:20rpx; }.upgrade-title { display:block; font-size:28rpx; font-weight:600; }.upgrade-link { display:block; margin-top:14rpx; color:#1d5d50; font-size:26rpx; }.result-notice { margin-top:28rpx; text-align:center; }
+.result-heading {
+  margin-top: 14rpx;
+  font-size: 42rpx;
+  font-weight: 700;
+  color: #173f36;
+  line-height: 1.35;
+}
+
+/* 动态人设卡片 */
+.persona-card {
+  margin: 20rpx 0 24rpx;
+  padding: 26rpx;
+  background: #f0f7f3;
+  border: 2rpx solid #cce2d6;
+  border-radius: 22rpx;
+}
+
+.persona-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.persona-badge-title {
+  font-size: 34rpx;
+  font-weight: 800;
+  color: #173f36;
+}
+
+.persona-tagline {
+  font-size: 22rpx;
+  font-weight: 600;
+  color: #246d5c;
+  background: #dbeef2;
+  padding: 4rpx 14rpx;
+  border-radius: 10rpx;
+}
+
+.persona-quote-body {
+  font-size: 26rpx;
+  color: #38554b;
+  line-height: 1.6;
+}
+
+/* 核心指标看板 */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18rpx;
+  margin: 32rpx 0 24rpx;
+}
+
+.metric-card {
+  padding: 28rpx 24rpx;
+  border-radius: 24rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-card.primary {
+  background: #173f36;
+  color: #ffffff;
+}
+
+.metric-card.secondary {
+  background: #eaf3ee;
+  color: #1a4238;
+  border: 2rpx solid #c8ddce;
+}
+
+.metric-tag {
+  font-size: 20rpx;
+  opacity: 0.8;
+  font-weight: 600;
+  letter-spacing: 1rpx;
+}
+
+.metric-value {
+  margin: 10rpx 0 6rpx;
+  font-size: 54rpx;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.metric-card.primary .metric-value {
+  color: #52e3b6;
+}
+
+.metric-card.secondary .metric-value {
+  color: #246d5c;
+}
+
+.metric-label {
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+.metric-hint {
+  margin-top: 8rpx;
+  font-size: 20rpx;
+  opacity: 0.75;
+  line-height: 1.3;
+}
+
+/* 结构堆叠图卡片 */
+.structure-card {
+  margin: 20rpx 0;
+  padding: 30rpx;
+  border-radius: 24rpx;
+  background: #ffffff;
+  border: 2rpx solid #d7e6df;
+  box-shadow: 0 4rpx 16rpx rgba(23, 63, 54, 0.05);
+}
+
+.card-caption {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: #6a8277;
+  margin-bottom: 20rpx;
+}
+
+.stacked-bar {
+  display: flex;
+  height: 28rpx;
+  border-radius: 14rpx;
+  overflow: hidden;
+  background: #e2ece7;
+  margin-bottom: 28rpx;
+}
+
+.bar-seg {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.bar-seg.working {
+  background: #256a59;
+}
+
+.bar-seg.pension {
+  background: #5db39d;
+}
+
+.bar-seg.tv {
+  background: #e59740;
+}
+
+.breakdown-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.breakdown-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 26rpx;
+  padding-bottom: 12rpx;
+  border-bottom: 1rpx solid #eef4f0;
+}
+
+.breakdown-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.item-left {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+}
+
+.dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+}
+
+.working-dot { background: #256a59; }
+.pension-dot { background: #5db39d; }
+.tv-dot { background: #e59740; }
+
+.item-name {
+  color: #28443b;
+}
+
+.item-right {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.item-ratio {
+  font-weight: 700;
+  color: #173f36;
+}
+
+.item-amount {
+  font-size: 22rpx;
+  color: #708a7e;
+}
+
+/* 收入断崖预警 */
+.cliff-alert {
+  margin: 24rpx 0;
+  padding: 26rpx;
+  border-radius: 20rpx;
+  background: #fff8eb;
+  border: 2rpx solid #f6cf8a;
+}
+
+.alert-header {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.alert-icon {
+  font-size: 28rpx;
+}
+
+.alert-title {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #925c0e;
+}
+
+.alert-content {
+  margin-top: 12rpx;
+  font-size: 25rpx;
+  color: #795213;
+  line-height: 1.5;
+}
+
+.alert-content .bold {
+  font-weight: 700;
+  color: #c2410c;
+}
+
+.alert-foot {
+  margin-top: 10rpx;
+  font-size: 22rpx;
+  color: #8c6422;
+  line-height: 1.4;
+}
+
+/* 总金额展示卡片 */
+.total-pv-card {
+  margin: 24rpx 0;
+  padding: 30rpx;
+  border-radius: 24rpx;
+  background: #f3f8f5;
+  border: 2rpx solid #cfe2d8;
+  text-align: center;
+}
+
+.total-caption {
+  font-size: 24rpx;
+  color: #5c786c;
+}
+
+.total-amount {
+  margin: 12rpx 0;
+  font-size: 52rpx;
+  font-weight: 800;
+  color: #16493c;
+}
+
+.total-note {
+  font-size: 22rpx;
+  color: #718f81;
+  line-height: 1.45;
+}
+
+/* 行动建议预览 */
+.action-preview {
+  margin: 24rpx 0;
+  padding: 28rpx;
+  border-radius: 22rpx;
+  background: #e7efe8;
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-label {
+  color: #5b766d;
+  font-size: 23rpx;
+  font-weight: 600;
+}
+
+.preview-title {
+  margin-top: 12rpx;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #183e34;
+}
+
+.preview-body {
+  margin-top: 12rpx;
+  color: #52655f;
+  font-size: 25rpx;
+  line-height: 1.55;
+}
+
+.links {
+  display: flex;
+  justify-content: center;
+  gap: 48rpx;
+  margin: 28rpx 0;
+  color: #1d5d50;
+  font-size: 26rpx;
+  text-decoration: underline;
+}
+
+/* 目标倒推迷你试玩卡片 (Hook) */
+.reverse-hook-card {
+  margin: 28rpx 0 16rpx;
+  padding: 30rpx;
+  background: #f0f7f3;
+  border: 2rpx solid #c8e0d4;
+  border-radius: 26rpx;
+}
+
+.hook-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #173f36;
+}
+
+.hook-desc {
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  color: #557367;
+  line-height: 1.45;
+}
+
+.hook-slider-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16rpx;
+}
+
+.hook-target-val {
+  font-size: 30rpx;
+  font-weight: 800;
+  color: #173f36;
+}
+
+.hook-gap-val {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #ea580c;
+}
+
+.hook-result-preview {
+  margin: 16rpx 0 20rpx;
+  padding: 18rpx;
+  background: #ffffff;
+  border-radius: 14rpx;
+  font-size: 24rpx;
+  color: #245647;
+  line-height: 1.5;
+}
+
+.hook-btn {
+  margin-top: 10rpx !important;
+  font-size: 26rpx !important;
+  padding: 22rpx 0 !important;
+}
+
+.result-notice {
+  margin-top: 24rpx;
+  text-align: center;
+  font-size: 22rpx;
+  color: #839d91;
+}

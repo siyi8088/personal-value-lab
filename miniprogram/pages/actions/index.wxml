@@ -9,6 +9,6 @@
       <button class="save-button {{savedId === item.id ? 'saved' : ''}}" data-action="{{item}}" bindtap="save">{{savedId === item.id ? '已保存' : '保存这个行动'}}</button>
     </view>
   </view>
-  <button class="secondary-button" bindtap="backToResult">回到我的地图</button>
+  <button class="secondary-button" bindtap="backToResult">回到我的结构图</button>
   <view class="notice">行动建议仅供自我规划参考，不构成职业或财务建议。</view>
 </view>
