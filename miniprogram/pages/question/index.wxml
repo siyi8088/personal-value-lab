@@ -13,7 +13,7 @@
     <view class="question-hint">系统将依据 2025 渐进式延迟退休新政，自动为你测算法定退休节点。</view>
 
     <!-- 性别选择 -->
-    <view class="field-label">性别</view>
+    <view class="field-label"><text class="field-num">01</text>性别与基准</view>
     <view class="gender-row">
       <view class="gender-chip {{gender === 'male' ? 'active' : ''}}" data-value="male" bindtap="chooseGender">
         <text>男职工 / 干部</text>
@@ -24,7 +24,7 @@
     </view>
 
     <!-- 年龄段 -->
-    <view class="field-label">当前年龄阶段</view>
+    <view class="field-label"><text class="field-num">02</text>当前年龄阶段</view>
     <view class="grid-options">
       <view wx:for="{{ageBands}}" wx:key="id" class="grid-item {{ageBand === item.id ? 'active' : ''}}" data-value="{{item.id}}" bindtap="chooseAgeBand">
         <text>{{item.label}}</text>
@@ -41,16 +41,19 @@
     </view>
 
     <!-- 退休计划微调 -->
-    <view class="field-label">你的主要工作预期</view>
-    <view class="pill-group">
-      <view class="pill-item {{retirementPlan === 'statutory' ? 'active' : ''}}" data-value="statutory" bindtap="chooseRetirementPlan">
-        依法定退休 ({{statutoryAge}}岁)
+    <view class="field-label"><text class="field-num">03</text>你的主要工作预期</view>
+    <view class="retirement-group">
+      <view class="retirement-item {{retirementPlan === 'statutory' ? 'active' : ''}}" data-value="statutory" bindtap="chooseRetirementPlan">
+        <view class="retirement-title">依法定退休</view>
+        <view class="retirement-sub">（{{statutoryAge}} 岁）</view>
       </view>
-      <view class="pill-item {{retirementPlan === 'fire' ? 'active' : ''}}" data-value="fire" bindtap="chooseRetirementPlan">
-        提前退休 / FIRE (50岁)
+      <view class="retirement-item {{retirementPlan === 'fire' ? 'active' : ''}}" data-value="fire" bindtap="chooseRetirementPlan">
+        <view class="retirement-title">提前退休 / FIRE</view>
+        <view class="retirement-sub">（50 岁）</view>
       </view>
-      <view class="pill-item {{retirementPlan === 'extended' ? 'active' : ''}}" data-value="extended" bindtap="chooseRetirementPlan">
-        退而不休 ({{statutoryAge + 5}}岁)
+      <view class="retirement-item {{retirementPlan === 'extended' ? 'active' : ''}}" data-value="extended" bindtap="chooseRetirementPlan">
+        <view class="retirement-title">退而不休</view>
+        <view class="retirement-sub">（{{statutoryAge + 5}} 岁）</view>
       </view>
     </view>
   </view>
@@ -60,18 +63,27 @@
     <view class="question-title">目前到手收入与工作类型？</view>
     <view class="question-hint">选择大概范围即可；这是确定你显性工作期现金流（PFCF）的基准。</view>
 
-    <view class="field-label">工作状态</view>
+    <view class="field-label"><text class="field-num">01</text>工作状态与风险偏好</view>
     <view class="pill-group wrap">
       <view wx:for="{{workTypes}}" wx:key="id" class="pill-item {{workType === item.id ? 'active' : ''}}" data-value="{{item.id}}" bindtap="chooseWorkType">
         {{item.label}}
       </view>
     </view>
 
-    <view class="field-label">每月到手收入区间</view>
+    <view class="field-label"><text class="field-num">02</text>每月到手收入区间</view>
     <view class="income-grid">
       <view wx:for="{{incomeOptions}}" wx:key="*this" class="income-grid-item {{incomeBand === item[0] ? 'selected' : ''}}" data-value="{{item[0]}}" bindtap="chooseIncome">
         <text class="income-grid-text">{{item[1]}}</text>
       </view>
+    </view>
+
+    <!-- 显性现金流基准测算卡片（对称问题1政策卡片，饱满填补空白） -->
+    <view class="policy-card income-summary-card">
+      <view class="policy-badge">PFCF 显性工作期基准测算</view>
+      <view class="policy-result">
+        预估年化净现金流：<text class="highlight">{{annualIncomeText}}</text>
+      </view>
+      <view class="policy-sub">确定了你折现公式中的自由现金流年化分子；{{workTypeDescText}}。</view>
     </view>
   </view>
 
@@ -83,8 +95,10 @@
     <view class="card-options">
       <view wx:for="{{riskOptions}}" wx:key="id" class="card-option {{careerRisk === item.id ? 'selected' : ''}}" data-value="{{item.id}}" bindtap="chooseRisk">
         <view class="card-opt-header">
-          <text class="card-opt-title">{{item.title}}</text>
-          <text wx:if="{{item.badge}}" class="card-badge">{{item.badge}}</text>
+          <view class="card-opt-title-row">
+            <text class="card-opt-title">{{item.title}}</text>
+            <text wx:if="{{item.badge}}" class="card-badge">{{item.badge}}</text>
+          </view>
           <text wx:if="{{careerRisk === item.id}}" class="check">✓</text>
         </view>
         <view class="card-opt-desc">{{item.desc}}</view>
@@ -111,9 +125,10 @@
   <!-- STEP 4: 独立持续收入引擎（终值准入检查） -->
   <view wx:if="{{step === 4}}" class="step-container">
     <view class="question-title">停止主要工作后，是否有持续收入引擎？</view>
-    <view class="question-hint">仅指脱离日常打卡、扣除维护成本后仍能独立持续产生的经营或资产现金流。</view>
+    <view class="question-hint">关注个人持续造血底盘，不统计既有存量资产；仅指脱离日常打卡后，仍能独立运转产生的经营或物业净现金流。</view>
 
-    <view class="card-options">
+    <view class="field-label"><text class="field-num">01</text>持续造血引擎类型</view>
+    <view class="card-options compact">
       <view wx:for="{{engineOptions}}" wx:key="id" class="card-option {{hasRecurringEngine === item.id ? 'selected' : ''}}" data-value="{{item.id}}" bindtap="chooseEngine">
         <view class="card-opt-header">
           <text class="card-opt-title">{{item.title}}</text>
@@ -123,13 +138,22 @@
       </view>
     </view>
 
-    <view wx:if="{{hasRecurringEngine !== 'none'}}" class="engine-amount-box">
-      <view class="field-label">年净营运现金流（扣除维护/再投资后）约为：</view>
-      <view class="pill-group wrap">
-        <view class="pill-item {{engineAnnualNetCashFlow === 20000 ? 'active' : ''}}" data-value="20000" bindtap="chooseEngineAmount">约 2 万 / 年</view>
-        <view class="pill-item {{engineAnnualNetCashFlow === 50000 ? 'active' : ''}}" data-value="50000" bindtap="chooseEngineAmount">约 5 万 / 年</view>
-        <view class="pill-item {{engineAnnualNetCashFlow === 100000 ? 'active' : ''}}" data-value="100000" bindtap="chooseEngineAmount">约 10 万 / 年</view>
-        <view class="pill-item {{engineAnnualNetCashFlow === 200000 ? 'active' : ''}}" data-value="200000" bindtap="chooseEngineAmount">20 万以上 / 年</view>
+    <!-- 02 年净营运现金流：始终常驻显示，无引擎时置灰锁定为 0，避免页面空旷与高度跳动 -->
+    <view class="engine-amount-box {{hasRecurringEngine === 'none' ? 'disabled' : ''}}">
+      <view class="field-label engine-amount-label">
+        <view class="label-left">
+          <text class="field-num {{hasRecurringEngine === 'none' ? 'num-disabled' : ''}}">02</text>
+          <text wx:if="{{hasRecurringEngine === 'none'}}">年净营运现金流</text>
+          <text wx:else>年净营运现金流（扣除成本后）约为：</text>
+        </view>
+        <text wx:if="{{hasRecurringEngine === 'none'}}" class="locked-badge">已锁定 0 元</text>
+      </view>
+      <view class="engine-amount-grid">
+        <view class="pill-item engine-amount-item {{hasRecurringEngine !== 'none' && engineAnnualNetCashFlow === 10000 ? 'active' : ''}}" data-value="10000" bindtap="chooseEngineAmount">约 1 万 / 年</view>
+        <view class="pill-item engine-amount-item {{hasRecurringEngine !== 'none' && engineAnnualNetCashFlow === 30000 ? 'active' : ''}}" data-value="30000" bindtap="chooseEngineAmount">约 3 万 / 年</view>
+        <view class="pill-item engine-amount-item {{hasRecurringEngine !== 'none' && engineAnnualNetCashFlow === 60000 ? 'active' : ''}}" data-value="60000" bindtap="chooseEngineAmount">约 6 万 / 年</view>
+        <view class="pill-item engine-amount-item {{hasRecurringEngine !== 'none' && engineAnnualNetCashFlow === 120000 ? 'active' : ''}}" data-value="120000" bindtap="chooseEngineAmount">约 12 万 / 年</view>
+        <view class="pill-item engine-amount-item {{hasRecurringEngine !== 'none' && engineAnnualNetCashFlow === 200000 ? 'active' : ''}}" data-value="200000" bindtap="chooseEngineAmount">20 万以上 / 年</view>
       </view>
     </view>
   </view>

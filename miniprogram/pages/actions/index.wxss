@@ -1,40 +1,54 @@
-.actions-page {
-  padding-bottom: 60rpx;
+.actions-page .eyebrow {
+  font-size: 24rpx;
+  color: #5b766d;
+  letter-spacing: 2rpx;
+}
+
+.actions-page .title {
+  margin-top: 14rpx;
+  font-size: 40rpx;
+  font-weight: 800;
+  color: #12332a;
+  line-height: 1.28;
+}
+
+.title-line {
+  display: block;
 }
 
 .actions-page .intro {
   margin-top: 16rpx;
   font-size: 26rpx;
   color: #557266;
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
 .action-list {
-  margin: 32rpx 0;
+  margin: 24rpx 0 20rpx;
 }
 
 .action-card {
-  margin-bottom: 26rpx;
-  padding: 30rpx;
-  border-radius: 24rpx;
+  margin-bottom: 20rpx;
+  padding: 26rpx 28rpx;
+  border-radius: 22rpx;
   background: #ffffff;
-  border: 2rpx solid #dce8e1;
-  box-shadow: 0 6rpx 20rpx rgba(23, 63, 54, 0.05);
+  border: 1.5rpx solid #dce8e1;
+  box-shadow: 0 4rpx 14rpx rgba(23, 63, 54, 0.04);
 }
 
 .action-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 14rpx;
+  margin-bottom: 10rpx;
 }
 
 .pillar-tag {
-  font-size: 22rpx;
+  font-size: 23rpx;
   font-weight: 700;
   color: #0f766e;
   background: #ccfbf1;
-  padding: 4rpx 14rpx;
+  padding: 5rpx 14rpx;
   border-radius: 8rpx;
 }
 
@@ -48,105 +62,97 @@
 
 .action-title {
   display: block;
-  font-size: 32rpx;
+  font-size: 31rpx;
   font-weight: 700;
   color: #173f36;
-  margin-bottom: 12rpx;
+  line-height: 1.36;
 }
 
-.rationale {
+.action-summary {
   display: block;
-  color: #557367;
+  margin-top: 10rpx;
   font-size: 25rpx;
-  line-height: 1.55;
-  margin-bottom: 20rpx;
+  color: #587569;
+  line-height: 1.52;
 }
 
-.first-step {
+/* 进阶工作台承接微卡片（组合3 · 现实校验与路径求解 · 居中对齐，与结果页完全对齐） */
+.wb-teaser-card {
+  position: relative;
+  margin: 24rpx 0 20rpx;
+  padding: 26rpx 50rpx;
+  background: linear-gradient(135deg, #f0f7f3 0%, #eaf4ee 100%);
+  border: 1.5rpx solid #c4dfd2;
+  border-radius: 22rpx;
   display: flex;
-  align-items: flex-start;
-  gap: 14rpx;
-  padding: 20rpx;
-  border-radius: 16rpx;
-  background: #f0f7f3;
-  border: 1rpx solid #d5e7dd;
-  font-size: 24rpx;
-  line-height: 1.5;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 14rpx rgba(23, 63, 54, 0.04);
+  box-sizing: border-box;
+  transition: all 0.2s ease;
 }
 
-.first-step-tag {
-  flex-shrink: 0;
-  color: #ffffff;
-  background: #1b8166;
-  font-size: 20rpx;
-  font-weight: 600;
-  padding: 2rpx 10rpx;
-  border-radius: 6rpx;
-  margin-top: 2rpx;
+.wb-teaser-card:active {
+  transform: scale(0.99);
+  background: #e4efe8;
 }
 
-.first-step-text {
-  color: #244b3d;
-  font-weight: 500;
-}
-
-.card-footer {
-  margin-top: 20rpx;
+.wb-teaser-center-body {
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
-.save-button {
-  margin: 0 !important;
-  padding: 8rpx 18rpx !important;
-  background: transparent !important;
-  border: 1rpx solid #b7d6c7 !important;
-  border-radius: 10rpx !important;
-  color: #173f36 !important;
-  font-size: 23rpx !important;
-  line-height: 1.4 !important;
-  font-weight: 600 !important;
+.wb-teaser-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
 }
 
-.save-button.saved {
-  background: #eaf5ef !important;
-  border-color: #1b8166 !important;
-  color: #1b8166 !important;
+.wb-teaser-icon {
+  font-size: 28rpx;
+  line-height: 1;
 }
 
-/* 工作台承接卡片 */
-.workbench-entry-card {
-  margin: 32rpx 0 24rpx;
-  padding: 30rpx;
-  background: #f0f8f4;
-  border: 2rpx dashed #1b8166;
-  border-radius: 24rpx;
-}
-
-.entry-title {
+.wb-teaser-title {
   font-size: 29rpx;
   font-weight: 700;
   color: #173f36;
+  line-height: 1.35;
 }
 
-.entry-desc {
-  margin: 10rpx 0 20rpx;
+.wb-teaser-sub {
+  margin-top: 8rpx;
   font-size: 23rpx;
-  color: #557367;
-  line-height: 1.5;
+  color: #55776a;
+  line-height: 1.4;
 }
 
-.entry-btn {
-  font-size: 27rpx !important;
-  padding: 20rpx 0 !important;
+.wb-teaser-side-arrow {
+  position: absolute;
+  right: 28rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 34rpx;
+  font-weight: 500;
+  color: #4a7465;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+.wb-teaser-card:active .wb-teaser-side-arrow {
+  transform: translateY(-50%) translateX(4rpx);
 }
 
 .back-btn {
-  margin-top: 10rpx !important;
+  margin-top: 8rpx !important;
 }
 
 .actions-page .notice {
-  margin-top: 28rpx;
+  margin-top: 24rpx;
   text-align: center;
   font-size: 22rpx;
   color: #839d91;

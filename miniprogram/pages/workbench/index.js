@@ -88,7 +88,10 @@ Page({
     hasTvEngine: false
   },
 
-  onLoad() {
+  onLoad(query) {
+    if (query && query.tab !== undefined) {
+      this.setData({ activeTab: Number(query.tab) })
+    }
     this.initProfile()
   },
 

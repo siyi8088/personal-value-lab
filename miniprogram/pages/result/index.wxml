@@ -90,31 +90,48 @@
     <text bindtap="explain">它是怎么算的？</text>
   </view>
 
-  <!-- 目标倒推迷你试玩滑块 (Hook to Advanced Workbench) -->
-  <view class="reverse-hook-card">
-    <view class="hook-header-row" bindtap="toggleHookExpanded">
-      <view class="hook-header-left">
-        <text class="hook-title">🎯 目标价值倒推（反向 DCF 试玩）</text>
-        <text class="hook-subtitle">设定期望现值目标，推导需要满足的现金流条件</text>
+  <!-- 方案 A：轻量级反向 DCF 进阶入口微卡片（居中优雅版） -->
+  <view class="reverse-teaser-card" bindtap="openWorkbenchWithReverse">
+    <view class="teaser-center-body">
+      <view class="teaser-title-row">
+        <text class="teaser-icon">🎯</text>
+        <text class="teaser-title">设定更高目标？试试反向 DCF</text>
       </view>
-      <text class="hook-arrow {{isHookExpanded ? 'arrow-up' : ''}}">▼</text>
+      <text class="teaser-subtitle">测算实现目标所需的每月结余或造血副业</text>
     </view>
-
-    <view wx:if="{{isHookExpanded}}" class="hook-expanded-body">
-      <view class="hook-desc">
-        当前系统估算现值约为 {{result.dcf.totalPv ? result.dcf.totalPv.mid / 10000 : 60}} 万元。拖动滑块设定你的财务目标：
-      </view>
-      <view class="hook-slider-row">
-        <text class="hook-target-val">目标：{{trialTargetWan}} 万元</text>
-        <text class="hook-gap-val">缺口：{{trialGapWan}} 万</text>
-      </view>
-      <slider min="100" max="600" step="20" value="{{trialTargetWan}}" bindchange="onTrialSlider" activeColor="#173f36"></slider>
-      <view class="hook-result-preview">
-        👉 初步推导：实现该目标，大致需要【每月多存 {{trialMonthlySavings}} 元】或【退休前培育一项年分红约 {{trialSideIncomeWan}} 万的副业】。
-      </view>
-      <button class="primary-button hook-btn" bindtap="openWorkbench">进入 DCF 进阶工作台 →</button>
-    </view>
+    <text class="teaser-side-arrow">›</text>
   </view>
 
   <view class="notice result-notice">{{result.disclosures[0]}}</view>
+
+  <!-- 方法论与深度阅读弹窗 -->
+  <view wx:if="{{showRulesModal}}" class="modal-mask" bindtap="closeRulesModal">
+    <view class="rules-modal-box" catchtap="noop">
+      <view class="rules-modal-title">关于个人现金流 DCF 实验室</view>
+      <view class="rules-modal-body">
+        <view class="rules-lead">我们将企业估值的 DCF 框架迁移至个人：</view>
+        <view class="rules-item"><text class="num">1.</text><text>劳动收入是显性有限期现金流，随退休截止；</text></view>
+        <view class="rules-item"><text class="num">2.</text><text>养老金属于退休后有限期年金现值，不计入永续终值；</text></view>
+        <view class="rules-item"><text class="num">3.</text><text>严格终值仅在具备独立持续造血引擎时准入；</text></view>
+        <view class="rules-item"><text class="num">4.</text><text>恪守防双重计价与保守折现纪律，绝不衡量人的身价。</text></view>
+
+        <view class="rules-divider"></view>
+
+        <view class="articles-lead">方法论深度阅读（点击复制链接）：</view>
+        <view class="article-link-row" data-url="https://mp.weixin.qq.com/s/15KzTxn6wrm_9NtMJuCVUw" data-name="自由现金流篇" bindtap="copyArticleUrl">
+          <text class="article-link-title">• 自由现金流篇：显性工作期的有限性</text>
+          <text class="article-link-icon">↗</text>
+        </view>
+        <view class="article-link-row" data-url="https://mp.weixin.qq.com/s/UZwv6d-8gO9U2cSyxvgtVA" data-name="独立终值篇" bindtap="copyArticleUrl">
+          <text class="article-link-title">• 独立终值篇：造血引擎与再投资纪律</text>
+          <text class="article-link-icon">↗</text>
+        </view>
+        <view class="article-link-row" data-url="https://mp.weixin.qq.com/s/o0zvzNG_zCTFffnTi9E1lA" data-name="目标倒推篇" bindtap="copyArticleUrl">
+          <text class="article-link-title">• 目标倒推篇：反向估值与现实检验</text>
+          <text class="article-link-icon">↗</text>
+        </view>
+      </view>
+      <button class="rules-close-btn" bindtap="closeRulesModal">我明白了</button>
+    </view>
+  </view>
 </view>

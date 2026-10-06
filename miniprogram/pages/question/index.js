@@ -59,45 +59,45 @@ const PENSION_OPTIONS = [
   {
     id: 'average',
     title: '工薪平均（约 3,000 元/月）',
-    desc: '贴合全国普通企业退休职工平均养老金水平'
+    desc: '贴合全国企业退休职工均值；仅能覆盖基础开支，若无独立造血引擎，晚年需持续消耗存量储蓄'
   },
   {
     id: 'basic',
     title: '基础温饱（约 1,500 元/月）',
-    desc: '城乡居保或灵活就业最低基数兜底保障'
+    desc: '城乡居保或最低基数折算兜底；仅维持最基本温饱，需在工作期尽早培育独立造血资产'
   },
   {
     id: 'affluent',
     title: '较充裕 / 体制内（约 8,000 元/月）',
-    desc: '机关事业单位、高工龄或含企业/职业年金'
+    desc: '机关事业编、高工龄或含职业年金；提供坚实防御垫，相当于自带一份高确定性的被动现金流'
   },
   {
     id: 'none',
     title: '暂不纳入模型（0 元）',
-    desc: '观察完全不依赖法定养老金、纯靠自持能力时的现金流结构'
+    desc: '完全不计入法定社保兜底；以严苛视角检验脱离打卡后，纯靠自持造血引擎与资产积累的真实抗风险底盘'
   }
 ]
 
 const ENGINE_OPTIONS = [
   {
     id: 'none',
-    title: '暂无持续收入引擎',
+    title: '暂无独立造血引擎',
     desc: '绝大多数普通人的常态；严格终值占比为 0%'
   },
   {
     id: 'rental',
-    title: '有稳定出租物业',
-    desc: '停止日常工作后仍有持续租金净收益（已扣除折旧与空置）'
+    title: '空间与物业出租',
+    desc: '房产、商铺、车位等脱离打卡的净租金（已扣除折旧与空置）'
   },
   {
     id: 'business',
-    title: '有自营业务 / 股权分红',
-    desc: '业务已脱离日常打卡，能够独立持续产生分红'
+    title: '实体小生意 / 股权分红',
+    desc: '自动化运营的实体店铺、合伙分红（已基本脱离肉身日常打卡）'
   },
   {
     id: 'royalty',
-    title: '有独立版权 / 订阅产品',
-    desc: '持续产生现金流，且每年有明确的维护与更新机制'
+    title: '数字内容 / 自媒体 / 独立版权',
+    desc: '自媒体长尾收益、公众号打赏、专栏课程、独立软件或图书专利版税'
   }
 ]
 
@@ -118,6 +118,8 @@ Page({
     hasRecurringEngine: 'none',
     engineAnnualNetCashFlow: 30000,
     canContinue: true,
+    annualIncomeText: '约 9.6 万 ~ 14.4 万 / 年',
+    workTypeDescText: '受雇工薪相对稳健，折现率采用基准低风险锚点',
     ageBands: AGE_BANDS,
     workTypes: WORK_TYPES,
     incomeOptions: INCOME_OPTIONS,
@@ -151,7 +153,33 @@ Page({
     })
 
     this.recomputeStatutory(gender, ageBand)
+    this.recomputeIncomeSummary(incomeBand, workType)
     this.setData({ step: Math.max(0, Math.min(requested, 4)) })
+  },
+
+  recomputeIncomeSummary(incomeBand, workType) {
+    const annualMap = {
+      under_5k: '约 6 万以下 / 年',
+      '5_8k': '约 6 万 ~ 9.6 万 / 年',
+      '8_12k': '约 9.6 万 ~ 14.4 万 / 年',
+      '12_20k': '约 14.4 万 ~ 24 万 / 年',
+      '20_35k': '约 24 万 ~ 42 万 / 年',
+      '35_50k': '约 42 万 ~ 60 万 / 年',
+      '50_80k': '约 60 万 ~ 96 万 / 年',
+      '80k_plus': '约 96 万以上 / 年',
+      undisclosed: '保密未透露（不计算金额底盘）'
+    }
+    const workDescMap = {
+      stable_employed: '受雇工薪相对稳健，折现率采用基准低风险锚点',
+      employed_variable: '含绩效浮动，模型将预置适度周期波动贴现',
+      project: '自由职业项目制，模型将计入业务周期性风险折价',
+      business: '自营创业模式，将严格剥离资本投入与劳动力现金流',
+      transition: '转型待业阶段，将按防守型底盘原则保守测算'
+    }
+    this.setData({
+      annualIncomeText: annualMap[incomeBand] || '约 9.6 万 ~ 14.4 万 / 年',
+      workTypeDescText: workDescMap[workType] || '受雇工薪相对稳健，折现率采用基准低风险锚点'
+    })
   },
 
   recomputeStatutory(gender, ageBand) {
@@ -198,12 +226,14 @@ Page({
   chooseIncome(e) {
     const incomeBand = e.currentTarget.dataset.value
     this.setData({ incomeBand })
+    this.recomputeIncomeSummary(incomeBand, this.data.workType)
     this.syncDraft()
   },
 
   chooseWorkType(e) {
     const workType = e.currentTarget.dataset.value
     this.setData({ workType })
+    this.recomputeIncomeSummary(this.data.incomeBand, workType)
     this.syncDraft()
   },
 

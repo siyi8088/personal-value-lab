@@ -86,7 +86,7 @@ function resolveSystemActions(dcf, profile, careerRisk, statutoryAge) {
         pillarTag: '🛡️ 防御端 · 显性期缓冲',
         title: '建立 6–12 个月刚性生活缓冲仓',
         period: '本月启动',
-        rationale: '受行业波动或中断风险影响，需将家庭房贷与基础生活硬开支隔离于高流动性资产中，阻断主业波动直接导致现金流断崖。',
+        rationale: '隔离房贷与生活硬开支于高流动资产中，阻断主业波动直接引发断崖。',
         firstStep: '按“房贷月供 + 基础生活费”核算出 6 个月的刚性底线金额，设立独立隔离账户。'
       }
     : {
@@ -94,7 +94,7 @@ function resolveSystemActions(dcf, profile, careerRisk, statutoryAge) {
         pillarTag: '🛡️ 防御端 · 显性期缓冲',
         title: '锁定基础生活现金安全垫',
         period: '下个发薪日',
-        rationale: '确保在追求职场进阶或转换赛道时，拥有至少 3~6 个月的刚性开支缓冲，保持选择从容度。',
+        rationale: '优先备足 3~6 个月刚性开支缓冲，在职场转换与进阶时保持从容底气。',
         firstStep: '设定发薪日自动转存规则，优先补足应急流动性资产。'
       }
 
@@ -105,16 +105,16 @@ function resolveSystemActions(dcf, profile, careerRisk, statutoryAge) {
         pillarTag: '🚀 进攻端 · 终值造血',
         title: '降低造血引擎对日常精力的依赖',
         period: '本季度落地',
-        rationale: '当前已具备持续收益萌芽，下一步核心是提升再投资效率与自动化程度，使分红能够跨越退休周期独立运转。',
-        firstStep: '梳理现有业务的日常维护耗时，明确哪些环节可流程化或通过工具沉淀。'
+        rationale: '提升自动化与分红水平，让收益脱离肉身打卡、跨越退休周期独立运转。',
+        firstStep: '梳理现有业务的日常维护耗时，明确哪些环节可流程化或沉淀为数字资产。'
       }
     : {
         id: 'action-offense',
         pillarTag: '🚀 进攻端 · 终值造血',
-        title: '启动第一项非劳动收入验证',
+        title: '启动第一项独立造血验证',
         period: '本季度落地',
-        rationale: '打破纯粹依靠肉身打卡的局限，从技能沉淀、数字版权或轻度副业切入，迈出严格终值从 0 到 1 的关键一步。',
-        firstStep: '梳理一项可复用的核心专业能力，低成本验证 1~2 个真实付费需求。'
+        rationale: '以最小成本验证一项技能变现或数字资产，为自己培育脱离打卡的第二现金流。',
+        firstStep: '梳理一项可复用的专业能力或数字资产，低成本验证 1~2 个真实付费需求（专栏、微咨询或独立小工具）。'
       }
 
   // 3. 后半场：制度兜底与年金
@@ -124,15 +124,15 @@ function resolveSystemActions(dcf, profile, careerRisk, statutoryAge) {
         pillarTag: '🌱 后半场 · 制度兜底',
         title: '补齐退休现金流基础防线',
         period: '年内规划',
-        rationale: '当前退休后现金流较薄弱，需提早规划第三支柱（个人养老金/商业年金），避免后半生出现生活品质断层。',
+        rationale: '提早规划第三支柱商业年金，避免退休后出现生活品质断层。',
         firstStep: '测算每年 12,000 元个人养老金税优额度，或考察稳健型养老年金产品。'
       }
     : {
         id: 'action-retirement',
         pillarTag: '🌱 后半场 · 制度兜底',
-        title: '对齐延迟退休节点的年金布局',
+        title: '对齐退休节点的年金布局',
         period: '年内规划',
-        rationale: `依据 2025 新政测算的法定退休年龄（${statutoryAge} 岁），核算退休后现金流替代率，确保晚年现金流与医疗保障充足。`,
+        rationale: '依据法定退休年龄核算统筹缺口，提前建立稳定的晚年被动年金安全垫。',
         firstStep: '登录个人所得税或社保平台核对缴费年限与预计替代率，评估补充商业年金的适当时点。'
       }
 

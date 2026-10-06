@@ -3,20 +3,93 @@
     <text class="eyebrow">PERSONAL VALUE LAB</text>
     <text class="settings" bindtap="openSettings">数据与隐私</text>
   </view>
-  <view class="map-orbit">
-    <view class="orbit orbit-one"></view><view class="orbit orbit-two"></view><view class="orbit orbit-three"></view>
-    <view class="map-dot dot-one"></view><view class="map-dot dot-two"></view><view class="map-dot dot-three"></view>
+
+  <!-- 1. 核心文案置顶（先声夺人） -->
+  <view class="hero-header">
+    <view class="hero-title">
+      <text class="title-subline">用企业的望远镜看自己</text>
+      <text class="title-mainline">测算你的终身造血能力</text>
+    </view>
+    <view class="hero-intro">
+      <view>依靠肉身打卡的收入往往有明确的保质期，而资产和制度才能跨越周期。</view>
+      <view class="intro-sub">推演显性工作期、退休年金与独立终值三大支柱，看清属于你的经济安全与选择空间。</view>
+    </view>
   </view>
-  <view class="eyebrow">3 分钟 · 无需登录 · 本地计算</view>
-  <view class="title">你的收入系统<br/>能走多远？</view>
-  <view class="body intro">用企业 DCF 估值框架，看清显性工作期、退休后现金流与终值构成；看清何时停止，以及一个目标需要什么现实条件。</view>
-  <view class="pill-row">
-    <text>不上传敏感资产</text>
-    <text>不给人定价</text>
-    <text>恪守 DCF 纪律</text>
+
+  <!-- 2. 中部核心推演模型卡片（DCF 三支柱架构） -->
+  <view class="model-card">
+    <view class="model-card-label">DCF 三段式现值推演模型</view>
+    <view class="model-orbit orbit-one"></view>
+    <view class="model-orbit orbit-two"></view>
+    <view class="model-orbit orbit-three"></view>
+
+    <!-- 三支柱锚点标注 -->
+    <view class="pillar-tag pillar-labor">
+      <view class="pillar-dot dot-labor"></view>
+      <text class="pillar-name">① 显性工作期</text>
+    </view>
+    <view class="pillar-tag pillar-pension">
+      <view class="pillar-dot dot-pension"></view>
+      <text class="pillar-name">② 退休年金</text>
+    </view>
+    <view class="pillar-tag pillar-terminal">
+      <view class="pillar-dot dot-terminal"></view>
+      <text class="pillar-name">③ 独立终值</text>
+    </view>
   </view>
-  <button class="primary-button start" bindtap="start">进入现金流实验室</button>
-  <button wx:if="{{hasDraft}}" class="secondary-button continue" bindtap="continueDraft">继续上次的测算</button>
-  <view class="rule-link" bindtap="openRules">它是怎么算的？</view>
-  <view class="notice footer">基于现金流折现（DCF）教育模型，不衡量人的价值，不用于征信、信贷或招聘。</view>
+
+  <!-- 3. 特性与信任背书（克制极简，去 Emoji） -->
+  <view class="trust-bar">
+    <view class="trust-item">
+      <text class="trust-dot"></text>
+      <text>3 分钟推演</text>
+    </view>
+    <view class="trust-item">
+      <text class="trust-dot"></text>
+      <text>零数据上传</text>
+    </view>
+    <view class="trust-item">
+      <text class="trust-dot"></text>
+      <text>严守 DCF 纪律</text>
+    </view>
+  </view>
+
+  <!-- 4. 行动触发区 -->
+  <view class="action-section">
+    <button class="primary-button start" bindtap="start">进入现金流实验室</button>
+    <button wx:if="{{hasDraft}}" class="secondary-button continue" bindtap="continueDraft">继续上次的测算</button>
+    <view class="rule-link" bindtap="openRules">它是怎么算的？</view>
+    <view class="notice footer">基于现金流折现（DCF）教育模型，不衡量人的价值，不用于征信、信贷或招聘。</view>
+  </view>
+
+  <!-- 方法论与深度阅读弹窗 -->
+  <view wx:if="{{showRulesModal}}" class="modal-mask" bindtap="closeRulesModal">
+    <view class="rules-modal-box" catchtap="noop">
+      <view class="rules-modal-title">关于个人现金流 DCF 实验室</view>
+      <view class="rules-modal-body">
+        <view class="rules-lead">我们将企业估值的 DCF 框架迁移至个人：</view>
+        <view class="rules-item"><text class="num">1.</text><text>劳动收入是显性有限期现金流，随退休截止；</text></view>
+        <view class="rules-item"><text class="num">2.</text><text>养老金属于退休后有限期年金现值，不计入永续终值；</text></view>
+        <view class="rules-item"><text class="num">3.</text><text>严格终值仅在具备独立持续造血引擎时准入；</text></view>
+        <view class="rules-item"><text class="num">4.</text><text>恪守防双重计价与保守折现纪律，绝不衡量人的身价。</text></view>
+
+        <view class="rules-divider"></view>
+
+        <view class="articles-lead">方法论深度阅读（点击复制链接）：</view>
+        <view class="article-link-row" data-url="https://mp.weixin.qq.com/s/15KzTxn6wrm_9NtMJuCVUw" data-name="自由现金流篇" bindtap="copyArticleUrl">
+          <text class="article-link-title">• 自由现金流篇：显性工作期的有限性</text>
+          <text class="article-link-icon">↗</text>
+        </view>
+        <view class="article-link-row" data-url="https://mp.weixin.qq.com/s/UZwv6d-8gO9U2cSyxvgtVA" data-name="独立终值篇" bindtap="copyArticleUrl">
+          <text class="article-link-title">• 独立终值篇：造血引擎与再投资纪律</text>
+          <text class="article-link-icon">↗</text>
+        </view>
+        <view class="article-link-row" data-url="https://mp.weixin.qq.com/s/o0zvzNG_zCTFffnTi9E1lA" data-name="目标倒推篇" bindtap="copyArticleUrl">
+          <text class="article-link-title">• 目标倒推篇：反向估值与现实检验</text>
+          <text class="article-link-icon">↗</text>
+        </view>
+      </view>
+      <button class="rules-close-btn" bindtap="closeRulesModal">我明白了</button>
+    </view>
+  </view>
 </view>
