@@ -68,18 +68,17 @@
     </view>
 
     <view class="field-label">每月到手收入区间</view>
-    <view class="options list-options">
-      <view wx:for="{{incomeOptions}}" wx:key="*this" class="option {{incomeBand === item[0] ? 'selected' : ''}}" data-value="{{item[0]}}" bindtap="chooseIncome">
-        <text>{{item[1]}}</text>
-        <text wx:if="{{incomeBand === item[0]}}" class="check">✓</text>
+    <view class="income-grid">
+      <view wx:for="{{incomeOptions}}" wx:key="*this" class="income-grid-item {{incomeBand === item[0] ? 'selected' : ''}}" data-value="{{item[0]}}" bindtap="chooseIncome">
+        <text class="income-grid-text">{{item[1]}}</text>
       </view>
     </view>
   </view>
 
   <!-- STEP 2: 短期调整与职业风险 (4类) -->
   <view wx:if="{{step === 2}}" class="step-container">
-    <view class="question-title">未来 1–2 年的职业预期与风险？</view>
-    <view class="question-hint">只有已确认的变化才计入前两年；失业风险将直观呈现 5 年收入断崖。</view>
+    <view class="question-title">未来 1–3 年的职业预期与风险？</view>
+    <view class="question-hint">只有已确认的变化才计入前三年；中断风险将直观呈现 5 年收入断崖。</view>
 
     <view class="card-options">
       <view wx:for="{{riskOptions}}" wx:key="id" class="card-option {{careerRisk === item.id ? 'selected' : ''}}" data-value="{{item.id}}" bindtap="chooseRisk">

@@ -55,10 +55,10 @@ const NEAR_TERM_SIGNALS = {
 
 // 新版 Step 3：短期调整与职业风险 4 分类
 const CAREER_RISKS = {
-  upside: { id: 'upside', title: '有上行空间', rates: [0.06, 0.06], maxWorkYears: Infinity },
-  downside: { id: 'downside', title: '明确下行压力', rates: [-0.08, -0.08], maxWorkYears: Infinity },
-  steady: { id: 'steady', title: '保持现状', rates: [0, 0], maxWorkYears: Infinity },
-  unemployment_risk: { id: 'unemployment_risk', title: '失业风险较高', rates: [0, 0], maxWorkYears: 5 }
+  upside: { id: 'upside', title: '稳中有升', rates: [0.06, 0.05, 0.04], maxWorkYears: Infinity },
+  downside: { id: 'downside', title: '行业承压', rates: [-0.06, -0.05, -0.04], maxWorkYears: Infinity },
+  steady: { id: 'steady', title: '平稳维持', rates: [0, 0, 0], maxWorkYears: Infinity },
+  unemployment_risk: { id: 'unemployment_risk', title: '中断风险', rates: [0, 0, 0], maxWorkYears: 5 }
 }
 
 // 新版 Step 4：退休后生活体感 4 档锚定 (月度金额)
@@ -70,37 +70,73 @@ const PENSION_TIERS = {
   custom: { id: 'custom', title: '自定义金额', monthlyAmount: 0, description: '用户自定义月度养老现金流' }
 }
 
-const ACTIONS = {
-  raise: {
-    id: 'prove-next-level', title: '证明下一档能力', period: '本周开始',
-    firstStep: '写下一个可量化的工作成果，并约一次发展沟通。',
-    rationale: '把“希望涨薪”变成能被验证的成果，比只等待机会更可控。'
-  },
-  career_change: {
-    id: 'test-direction', title: '低成本验证新方向', period: '两周内',
-    firstStep: '完成一次行业访谈或一个小作品，再决定是否投入课程或辞职。',
-    rationale: '转型期最重要的是先获得真实反馈，而不是一次性押注。'
-  },
-  stability: {
-    id: 'map-low-month', title: '先认识你的低谷月', period: '本周开始',
-    firstStep: '记录过去 6 个月的到手收入，圈出最低的一个月。',
-    rationale: '知道低谷收入，才知道自己需要怎样的收入缓冲。'
-  },
-  learn: {
-    id: 'validate-skill', title: '验证一项关键技能', period: '两周内',
-    firstStep: '用两周完成一个真实任务或作品，验证它是否带来新的机会。',
-    rationale: '先验证技能和机会的连接，再投入更高的学习成本。'
-  },
-  save: {
-    id: 'start-buffer', title: '建立一笔小缓冲', period: '下个发薪日',
-    firstStep: '设置一笔自动转入独立账户的小额储蓄。',
-    rationale: '可见的小缓冲，会让未来的选择更从容。'
-  },
-  none: {
-    id: 'review-income', title: '看清收入的来源', period: '本周开始',
-    firstStep: '把最近三个月的收入按固定、浮动和偶发三类写下来。',
-    rationale: '先看清哪部分收入可持续，才能判断下一步要改善什么。'
-  }
+/**
+ * 根据现金流 DCF 结构与画像，动态生成 3 项核心系统优化策略备忘
+ */
+function resolveSystemActions(dcf, profile, careerRisk, statutoryAge) {
+  const hasCliff = careerRisk && careerRisk.id === 'unemployment_risk'
+  const isVolatileWork = ['project', 'business', 'transition'].includes(profile.workType)
+  const hasEngine = profile.hasRecurringEngine && profile.hasRecurringEngine !== 'none'
+  const isLowPension = ['basic', 'none'].includes(profile.pensionTier)
+
+  // 1. 防御端：显性期缓冲仓
+  const defenseAction = (hasCliff || isVolatileWork)
+    ? {
+        id: 'action-defense',
+        pillarTag: '🛡️ 防御端 · 显性期缓冲',
+        title: '建立 6–12 个月刚性生活缓冲仓',
+        period: '本月启动',
+        rationale: '受行业波动或中断风险影响，需将家庭房贷与基础生活硬开支隔离于高流动性资产中，阻断主业波动直接导致现金流断崖。',
+        firstStep: '按“房贷月供 + 基础生活费”核算出 6 个月的刚性底线金额，设立独立隔离账户。'
+      }
+    : {
+        id: 'action-defense',
+        pillarTag: '🛡️ 防御端 · 显性期缓冲',
+        title: '锁定基础生活现金安全垫',
+        period: '下个发薪日',
+        rationale: '确保在追求职场进阶或转换赛道时，拥有至少 3~6 个月的刚性开支缓冲，保持选择从容度。',
+        firstStep: '设定发薪日自动转存规则，优先补足应急流动性资产。'
+      }
+
+  // 2. 进攻端：终值造血
+  const offenseAction = hasEngine
+    ? {
+        id: 'action-offense',
+        pillarTag: '🚀 进攻端 · 终值造血',
+        title: '降低造血引擎对日常精力的依赖',
+        period: '本季度落地',
+        rationale: '当前已具备持续收益萌芽，下一步核心是提升再投资效率与自动化程度，使分红能够跨越退休周期独立运转。',
+        firstStep: '梳理现有业务的日常维护耗时，明确哪些环节可流程化或通过工具沉淀。'
+      }
+    : {
+        id: 'action-offense',
+        pillarTag: '🚀 进攻端 · 终值造血',
+        title: '启动第一项非劳动收入验证',
+        period: '本季度落地',
+        rationale: '打破纯粹依靠肉身打卡的局限，从技能沉淀、数字版权或轻度副业切入，迈出严格终值从 0 到 1 的关键一步。',
+        firstStep: '梳理一项可复用的核心专业能力，低成本验证 1~2 个真实付费需求。'
+      }
+
+  // 3. 后半场：制度兜底与年金
+  const retirementAction = isLowPension
+    ? {
+        id: 'action-retirement',
+        pillarTag: '🌱 后半场 · 制度兜底',
+        title: '补齐退休现金流基础防线',
+        period: '年内规划',
+        rationale: '当前退休后现金流较薄弱，需提早规划第三支柱（个人养老金/商业年金），避免后半生出现生活品质断层。',
+        firstStep: '测算每年 12,000 元个人养老金税优额度，或考察稳健型养老年金产品。'
+      }
+    : {
+        id: 'action-retirement',
+        pillarTag: '🌱 后半场 · 制度兜底',
+        title: '对齐延迟退休节点的年金布局',
+        period: '年内规划',
+        rationale: `依据 2025 新政测算的法定退休年龄（${statutoryAge} 岁），核算退休后现金流替代率，确保晚年现金流与医疗保障充足。`,
+        firstStep: '登录个人所得税或社保平台核对缴费年限与预计替代率，评估补充商业年金的适当时点。'
+      }
+
+  return [defenseAction, offenseAction, retirementAction]
 }
 
 // 现金流人设文案库：根据主力支柱动态判定，并支持随机变体
@@ -333,7 +369,7 @@ function calculateDcf(profile, currentAge, expectedRetirementAge) {
       let yearlyCashFlow = monthly * 12
       for (let t = 1; t <= totalWorkYearsPossible; t += 1) {
         if (t <= activeWorkYears) {
-          if (t <= 2 && careerRisk.rates[t - 1]) {
+          if (t <= 3 && careerRisk.rates[t - 1]) {
             yearlyCashFlow *= (1 + careerRisk.rates[t - 1])
           }
           pv += yearlyCashFlow / Math.pow(1 + r, t)
@@ -452,7 +488,7 @@ function annualTotalLegacy(monthlyRange, assumption, scenario, careerRisk) {
       if (year > careerRisk.maxWorkYears) {
         break
       }
-      if (year <= 2 && shortTermRates[year - 1]) yearlyIncome *= (1 + shortTermRates[year - 1])
+      if (year <= 3 && shortTermRates[year - 1]) yearlyIncome *= (1 + shortTermRates[year - 1])
       total += yearlyIncome
     }
     return Math.max(0, Math.round(total))
@@ -479,10 +515,7 @@ function calculateQuick(profile) {
   const dcf = calculateDcf(profile, currentAge, expectedRetirementAge)
   const persona = resolvePersona(dcf, statutoryAge, expectedRetirementAge)
 
-  const primaryAction = ACTIONS[profile.goal || 'none']
-  const commonAction = profile.workType === 'project' || profile.workType === 'business'
-    ? ACTIONS.stability
-    : ACTIONS.save
+  const actions = resolveSystemActions(dcf, profile, careerRisk, statutoryAge)
 
   const result = {
     engineVersion: ENGINE_VERSION,
@@ -496,14 +529,14 @@ function calculateQuick(profile) {
     statutoryRetireInfo: statutoryRetire,
     careerRisk,
     dcf,
-    actions: [primaryAction, commonAction].filter((action, index, list) => list.findIndex((item) => item.id === action.id) === index),
+    actions,
     explanations: [
       '个人现金流系统按今天的购买力推演显性工作期、退休后有限现金流与独立终值。',
       '劳动收入为有限期现金流，到退休节点硬性停止；不假设工资永续。',
       '社保养老金属于退休后有限期年金现值，不计入 Gordon 永续终值。',
       dcf.cliff && dcf.cliff.hasCliff
-        ? `在设定的失业风险下，劳动现金流仅计入未来 5 年；随后至法定退休（${statutoryAge}岁）有 ${dcf.cliff.cliffYears} 年收入真空期。`
-        : '默认不假设长期工资增长；第 3 年起按真实购买力平稳基线折现。',
+        ? `在设定的中断风险下，劳动现金流仅计入未来 5 年；随后至法定退休（${statutoryAge}岁）有 ${dcf.cliff.cliffYears} 年收入真空期。`
+        : '默认不假设长期工资增长；第 4 年起按真实购买力平稳基线折现。',
       '本模型估算现金流系统构成，不衡量个人价值与身价。'
     ],
     disclosures: [

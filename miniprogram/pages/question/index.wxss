@@ -75,6 +75,42 @@
   font-weight: 600;
 }
 
+/* 收入区间 3x3 紧凑网格 */
+.income-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14rpx;
+  margin-top: 10rpx;
+}
+
+.income-grid-item {
+  padding: 22rpx 6rpx;
+  background: #f1f6f3;
+  border: 2rpx solid #d4e3dc;
+  border-radius: 16rpx;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.income-grid-item.selected {
+  background: #173f36;
+  border-color: #173f36;
+}
+
+.income-grid-text {
+  font-size: 24rpx;
+  color: #2c443c;
+  font-weight: 500;
+}
+
+.income-grid-item.selected .income-grid-text {
+  color: #ffffff;
+  font-weight: 600;
+}
+
 /* 政策测算卡片 */
 .policy-card {
   margin: 28rpx 0 10rpx;

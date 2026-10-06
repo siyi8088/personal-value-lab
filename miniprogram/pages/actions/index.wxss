@@ -1,1 +1,153 @@
-.actions-page .intro { margin-top:25rpx; }.action-list { margin:38rpx 0; }.action-card { margin-bottom:24rpx; padding:30rpx; border-radius:24rpx; background:#fff; box-shadow:0 8rpx 30rpx rgba(30,69,57,.06); }.period { color:#5b766d; font-size:23rpx; }.action-title { display:block; margin-top:12rpx; font-size:36rpx; font-weight:700; }.rationale { display:block; margin-top:14rpx; color:#5b6861; font-size:26rpx; line-height:1.55; }.first-step { display:flex; gap:16rpx; margin-top:25rpx; padding:20rpx; border-radius:14rpx; background:#edf3ee; color:#29443d; font-size:25rpx; line-height:1.5; }.first-step text:first-child { flex:0 0 auto; color:#1d5d50; font-weight:600; }.save-button { margin:22rpx 0 0; padding:0; background:transparent; color:#1d5d50; font-size:26rpx; line-height:1.4; text-align:left; }.save-button.saved { color:#5c756b; }.actions-page .notice { margin-top:28rpx; text-align:center; }
+.actions-page {
+  padding-bottom: 60rpx;
+}
+
+.actions-page .intro {
+  margin-top: 16rpx;
+  font-size: 26rpx;
+  color: #557266;
+  line-height: 1.5;
+}
+
+.action-list {
+  margin: 32rpx 0;
+}
+
+.action-card {
+  margin-bottom: 26rpx;
+  padding: 30rpx;
+  border-radius: 24rpx;
+  background: #ffffff;
+  border: 2rpx solid #dce8e1;
+  box-shadow: 0 6rpx 20rpx rgba(23, 63, 54, 0.05);
+}
+
+.action-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14rpx;
+}
+
+.pillar-tag {
+  font-size: 22rpx;
+  font-weight: 700;
+  color: #0f766e;
+  background: #ccfbf1;
+  padding: 4rpx 14rpx;
+  border-radius: 8rpx;
+}
+
+.period-pill {
+  color: #5c7b6d;
+  font-size: 22rpx;
+  background: #f1f6f3;
+  padding: 4rpx 14rpx;
+  border-radius: 8rpx;
+}
+
+.action-title {
+  display: block;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #173f36;
+  margin-bottom: 12rpx;
+}
+
+.rationale {
+  display: block;
+  color: #557367;
+  font-size: 25rpx;
+  line-height: 1.55;
+  margin-bottom: 20rpx;
+}
+
+.first-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 14rpx;
+  padding: 20rpx;
+  border-radius: 16rpx;
+  background: #f0f7f3;
+  border: 1rpx solid #d5e7dd;
+  font-size: 24rpx;
+  line-height: 1.5;
+}
+
+.first-step-tag {
+  flex-shrink: 0;
+  color: #ffffff;
+  background: #1b8166;
+  font-size: 20rpx;
+  font-weight: 600;
+  padding: 2rpx 10rpx;
+  border-radius: 6rpx;
+  margin-top: 2rpx;
+}
+
+.first-step-text {
+  color: #244b3d;
+  font-weight: 500;
+}
+
+.card-footer {
+  margin-top: 20rpx;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.save-button {
+  margin: 0 !important;
+  padding: 8rpx 18rpx !important;
+  background: transparent !important;
+  border: 1rpx solid #b7d6c7 !important;
+  border-radius: 10rpx !important;
+  color: #173f36 !important;
+  font-size: 23rpx !important;
+  line-height: 1.4 !important;
+  font-weight: 600 !important;
+}
+
+.save-button.saved {
+  background: #eaf5ef !important;
+  border-color: #1b8166 !important;
+  color: #1b8166 !important;
+}
+
+/* 工作台承接卡片 */
+.workbench-entry-card {
+  margin: 32rpx 0 24rpx;
+  padding: 30rpx;
+  background: #f0f8f4;
+  border: 2rpx dashed #1b8166;
+  border-radius: 24rpx;
+}
+
+.entry-title {
+  font-size: 29rpx;
+  font-weight: 700;
+  color: #173f36;
+}
+
+.entry-desc {
+  margin: 10rpx 0 20rpx;
+  font-size: 23rpx;
+  color: #557367;
+  line-height: 1.5;
+}
+
+.entry-btn {
+  font-size: 27rpx !important;
+  padding: 20rpx 0 !important;
+}
+
+.back-btn {
+  margin-top: 10rpx !important;
+}
+
+.actions-page .notice {
+  margin-top: 28rpx;
+  text-align: center;
+  font-size: 22rpx;
+  color: #839d91;
+}

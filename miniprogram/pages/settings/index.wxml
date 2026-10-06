@@ -1,7 +1,7 @@
 <view class="page settings-page">
   <view class="eyebrow">数据与隐私</view>
   <view class="title">你的数据由你决定</view>
-  <view class="setting-card"><text>V1 如何存储</text><text>快速测的回答、结果和行动计划默认只保存在当前设备；本版本不要求登录，不上传财务明细。</text></view>
+  <view class="setting-card"><text>数据如何存储</text><text>快速测的回答、结果和行动计划默认只保存在当前设备；本版本不要求登录，不上传财务明细。</text></view>
   <view class="setting-card"><text>分享包含什么</text><text>分享卡不包含金额、年龄、职业、原始回答和行动建议细节。好友会独立完成自己的测算。</text></view>
   <view class="setting-card"><text>这不是</text><text>它不是人的身价、职业排行榜、征信、招聘筛选或金融产品推荐。</text></view>
   <button class="danger-button" bindtap="clearData">删除这台设备上的快速测数据</button>

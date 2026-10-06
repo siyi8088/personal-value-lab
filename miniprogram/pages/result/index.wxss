@@ -1,106 +1,72 @@
-.result-heading {
-  margin-top: 14rpx;
-  font-size: 42rpx;
-  font-weight: 700;
-  color: #173f36;
-  line-height: 1.35;
-}
-
-/* 动态人设卡片 */
-.persona-card {
-  margin: 20rpx 0 24rpx;
-  padding: 26rpx;
-  background: #f0f7f3;
+/* 顶部 Hero 总览卡片（现值大数 + 极简人设金句） */
+.hero-overview-card {
+  margin: 18rpx 0 24rpx;
+  padding: 32rpx 28rpx;
+  background: #ffffff;
   border: 2rpx solid #cce2d6;
-  border-radius: 22rpx;
+  border-radius: 26rpx;
+  box-shadow: 0 8rpx 24rpx rgba(23, 63, 54, 0.06);
+  text-align: center;
 }
 
-.persona-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12rpx;
-}
-
-.persona-badge-title {
-  font-size: 34rpx;
-  font-weight: 800;
-  color: #173f36;
-}
-
-.persona-tagline {
-  font-size: 22rpx;
-  font-weight: 600;
-  color: #246d5c;
-  background: #dbeef2;
-  padding: 4rpx 14rpx;
-  border-radius: 10rpx;
-}
-
-.persona-quote-body {
-  font-size: 26rpx;
-  color: #38554b;
-  line-height: 1.6;
-}
-
-/* 核心指标看板 */
-.metrics-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18rpx;
-  margin: 32rpx 0 24rpx;
-}
-
-.metric-card {
-  padding: 28rpx 24rpx;
-  border-radius: 24rpx;
+.hero-val-section {
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
-.metric-card.primary {
-  background: #173f36;
-  color: #ffffff;
-}
-
-.metric-card.secondary {
-  background: #eaf3ee;
-  color: #1a4238;
-  border: 2rpx solid #c8ddce;
-}
-
-.metric-tag {
-  font-size: 20rpx;
-  opacity: 0.8;
+.hero-caption {
+  font-size: 24rpx;
   font-weight: 600;
+  color: #5c7b6e;
   letter-spacing: 1rpx;
 }
 
-.metric-value {
-  margin: 10rpx 0 6rpx;
-  font-size: 54rpx;
+.hero-amount {
+  margin: 10rpx 0 8rpx;
+  font-size: 56rpx;
   font-weight: 800;
-  line-height: 1.1;
+  color: #14493b;
+  line-height: 1.15;
 }
 
-.metric-card.primary .metric-value {
-  color: #52e3b6;
+.hero-amount-undisclosed {
+  margin: 10rpx 0 8rpx;
+  font-size: 42rpx;
+  font-weight: 700;
+  color: #436357;
 }
 
-.metric-card.secondary .metric-value {
-  color: #246d5c;
+.hero-note {
+  font-size: 22rpx;
+  color: #7a988c;
+  line-height: 1.4;
 }
 
-.metric-label {
-  font-size: 26rpx;
-  font-weight: 600;
+.hero-persona-divider {
+  height: 1rpx;
+  background: #eef4f0;
+  margin: 22rpx 10rpx;
 }
 
-.metric-hint {
-  margin-top: 8rpx;
-  font-size: 20rpx;
-  opacity: 0.75;
-  line-height: 1.3;
+.hero-persona-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.hero-persona-badge {
+  font-size: 30rpx;
+  font-weight: 800;
+  color: #173f36;
+}
+
+.hero-persona-punchline {
+  font-size: 24rpx;
+  font-weight: 500;
+  color: #3b5f53;
+  line-height: 1.45;
 }
 
 /* 结构堆叠图卡片 */
@@ -246,64 +212,6 @@
   line-height: 1.4;
 }
 
-/* 总金额展示卡片 */
-.total-pv-card {
-  margin: 24rpx 0;
-  padding: 30rpx;
-  border-radius: 24rpx;
-  background: #f3f8f5;
-  border: 2rpx solid #cfe2d8;
-  text-align: center;
-}
-
-.total-caption {
-  font-size: 24rpx;
-  color: #5c786c;
-}
-
-.total-amount {
-  margin: 12rpx 0;
-  font-size: 52rpx;
-  font-weight: 800;
-  color: #16493c;
-}
-
-.total-note {
-  font-size: 22rpx;
-  color: #718f81;
-  line-height: 1.45;
-}
-
-/* 行动建议预览 */
-.action-preview {
-  margin: 24rpx 0;
-  padding: 28rpx;
-  border-radius: 22rpx;
-  background: #e7efe8;
-  display: flex;
-  flex-direction: column;
-}
-
-.preview-label {
-  color: #5b766d;
-  font-size: 23rpx;
-  font-weight: 600;
-}
-
-.preview-title {
-  margin-top: 12rpx;
-  font-size: 32rpx;
-  font-weight: 700;
-  color: #183e34;
-}
-
-.preview-body {
-  margin-top: 12rpx;
-  color: #52655f;
-  font-size: 25rpx;
-  line-height: 1.55;
-}
-
 .links {
   display: flex;
   justify-content: center;
@@ -317,20 +225,55 @@
 /* 目标倒推迷你试玩卡片 (Hook) */
 .reverse-hook-card {
   margin: 28rpx 0 16rpx;
-  padding: 30rpx;
+  padding: 26rpx 28rpx;
   background: #f0f7f3;
   border: 2rpx solid #c8e0d4;
-  border-radius: 26rpx;
+  border-radius: 24rpx;
+  transition: all 0.2s ease;
+}
+
+.hook-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hook-header-left {
+  display: flex;
+  flex-direction: column;
 }
 
 .hook-title {
-  font-size: 30rpx;
+  font-size: 29rpx;
   font-weight: 700;
   color: #173f36;
 }
 
+.hook-subtitle {
+  font-size: 22rpx;
+  color: #557367;
+  margin-top: 6rpx;
+}
+
+.hook-arrow {
+  font-size: 24rpx;
+  color: #1b8166;
+  font-weight: 700;
+  transition: transform 0.25s ease;
+  display: inline-block;
+}
+
+.hook-arrow.arrow-up {
+  transform: rotate(180deg);
+}
+
+.hook-expanded-body {
+  margin-top: 20rpx;
+  padding-top: 18rpx;
+  border-top: 1rpx solid #dce8e0;
+}
+
 .hook-desc {
-  margin-top: 10rpx;
   font-size: 24rpx;
   color: #557367;
   line-height: 1.45;
@@ -367,7 +310,7 @@
 
 .hook-btn {
   margin-top: 10rpx !important;
-  font-size: 26rpx !important;
+  font-size: 28rpx !important;
   padding: 22rpx 0 !important;
 }
 

@@ -14,5 +14,6 @@ Page({
     this.setData({ savedId: action.id })
     wx.showToast({ title: '已保存到本机', icon: 'success' })
   },
-  backToResult() { wx.navigateBack() }
+  backToResult() { wx.navigateBack() },
+  goToWorkbench() { wx.navigateTo({ url: '/pages/workbench/index' }) }
 })

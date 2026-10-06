@@ -8,7 +8,12 @@ Page({
     trialTargetWan: 200,
     trialGapWan: 120,
     trialMonthlySavings: 2800,
-    trialSideIncomeWan: 4.2
+    trialSideIncomeWan: 4.2,
+    isHookExpanded: false
+  },
+
+  toggleHookExpanded() {
+    this.setData({ isHookExpanded: !this.data.isHookExpanded })
   },
 
   onShow() {
