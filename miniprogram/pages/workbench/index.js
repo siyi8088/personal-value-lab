@@ -161,27 +161,27 @@ Page({
       return {
         level: 'warning',
         badge: '⚠️ 面临失业断崖风险',
-        text: '系统已标记职业中断风险（工资仅计入未来 5 年）。建议前往底表配置副业探索或培育独立造血分红，缓冲断崖冲击。'
+        text: '因受职业中断假设影响，劳动现金流被截断在未来 5 年内，与法定退休之间出现漫长的收入真空期。系统总体折现现值受到显著压制，抵御家庭刚性支出的安全边际偏低。建议尽早建立流动性储备底仓，并在底表中试算第二收入曲线对断崖期的缓冲效果。'
       }
     }
     if (forward.ratios.strictTvRatio > 0) {
       return {
         level: 'success',
         badge: '🌱 拥有独立造血引擎',
-        text: `系统已包含脱离日常打卡的独立造血业务（严格终值现值约 ${forward.strictTvWan} 万元，占比 ${forward.ratios.strictTvRatio}%）。可在底表中精细核对维护成本与分红基数。`
+        text: `你的现金流系统已具备脱离肉身打卡的独立造血能力，终值现值约 ${forward.strictTvWan} 万元（占比 ${forward.ratios.strictTvRatio}%），这是跨越周期、抵御通胀的核心支柱。终值估值对增长率(g)与折现率(r)极度敏感，建议在底表中严谨核验业务维系成本与分红确定性，警惕过度乐观。`
       }
     }
     if (forward.ratios.workingRatio >= 70) {
       return {
         level: 'info',
         badge: '🏢 高度依赖肉身打卡',
-        text: `你的现金流系统目前 ${forward.ratios.workingRatio}% 依赖打卡出勤。当前底表已继承初筛画像，建议进一步校准房贷、日常支出或添加副业储备。`
+        text: `系统总现值的 ${forward.ratios.workingRatio}% 完全依托于在职劳动收入，资产与终值造血几乎空白，抗风险结构呈典型的“单引擎承重”。一旦遭遇行业周期收缩或职业中断，现金流将失去主要动能。建议在稳定主业的同时，逐步将工作期净结余转化为生息资产或探索轻量级自营分红。`
       }
     }
     return {
       level: 'normal',
       badge: '⚖️ 多元现金流结构',
-      text: '你的现金流系统呈现多段式分布。可通过底表精细校准各流向起止年龄与维护成本。'
+      text: '系统现金流在职场劳动、年金兜底与资产储备间分布相对平稳，具备较好的抗周期韧性。可进一步通过底表核对各项刚性支出的起止期限，并在假设实验室中评估折现率变动对各项远期现金流的差异化影响。'
     }
   },
 
@@ -217,54 +217,6 @@ Page({
     })
   },
 
-  onDimensionTap(e) {
-    const target = e.currentTarget.dataset.target
-    if (target === 'working') {
-      const laborStream = (this.data.profile.incomeStreams || []).find(s => ['labor', 'side_job'].includes(s.kind)) || this.data.profile.incomeStreams[0]
-      this.setData({ activeTab: 1 })
-      if (laborStream) {
-        this.openEditStreamModal({ currentTarget: { dataset: { id: laborStream.id } } })
-      } else {
-        this.openAddStreamModal()
-      }
-    } else if (target === 'pension') {
-      const pensionStream = (this.data.profile.incomeStreams || []).find(s => s.kind === 'pension')
-      this.setData({ activeTab: 1 })
-      if (pensionStream) {
-        this.openEditStreamModal({ currentTarget: { dataset: { id: pensionStream.id } } })
-      } else {
-        this.setData({
-          showAddStreamModal: true,
-          isEditingStream: false,
-          editingStreamId: '',
-          newStream: {
-            name: '基础养老金',
-            kind: 'pension',
-            annualAmount: 36000,
-            startAge: this.data.profile.expectedRetirementAge || 63,
-            endAge: 82,
-            maintenanceCost: 0,
-            supportsTerminalValue: false
-          }
-        })
-      }
-    } else if (target === 'tv') {
-      const tvStream = (this.data.profile.incomeStreams || []).find(s => s.supportsTerminalValue && Number(s.annualAmount) > 0)
-      if (tvStream) {
-        this.setData({ activeTab: 1 })
-        this.openEditStreamModal({ currentTarget: { dataset: { id: tvStream.id } } })
-      } else {
-        this.goToAddTvStream()
-      }
-    } else if (target === 'nav') {
-      this.setData({ activeTab: 1 })
-      if (this.data.profile.assets && this.data.profile.assets.length > 0) {
-        this.openEditAssetModal({ currentTarget: { dataset: { id: this.data.profile.assets[0].id } } })
-      } else {
-        this.openAddAssetModal()
-      }
-    }
-  },
 
   toggleBasis(e) {
     const basis = e.currentTarget.dataset.basis

@@ -45,79 +45,80 @@
   padding: 30rpx;
 }
 
-/* 口径切换 */
+/* 口径切换（轻盈分段器质感） */
 .basis-switch-row {
   display: flex;
   background: #e7efe9;
   border-radius: 40rpx;
   padding: 6rpx;
-  margin-bottom: 12rpx;
+  margin-bottom: 24rpx;
 }
 
 .basis-pill {
   flex: 1;
   text-align: center;
-  padding: 16rpx 0;
+  padding: 16rpx 10rpx;
   font-size: 24rpx;
   color: #557266;
   border-radius: 36rpx;
   transition: all 0.2s;
+  white-space: nowrap;
 }
 
 .basis-pill.active {
-  background: #173f36;
-  color: #ffffff;
-  font-weight: 600;
+  background: #ffffff;
+  color: #173f36;
+  font-weight: 700;
+  box-shadow: 0 4rpx 14rpx rgba(23, 63, 54, 0.08);
 }
 
-.basis-tip {
-  font-size: 22rpx;
-  color: #6c887b;
-  margin-bottom: 28rpx;
-  line-height: 1.4;
-}
-
-/* 现值总卡 */
+/* 现值总卡（优雅浅雾青高质感，告别厚重深色块） */
 .pcsv-summary-card {
-  padding: 36rpx 30rpx;
-  background: #173f36;
-  color: #ffffff;
+  padding: 34rpx 30rpx;
+  background: linear-gradient(145deg, #ffffff 0%, #f4f9f6 100%);
+  border: 1.5rpx solid #cce1d6;
+  color: #173f36;
   border-radius: 28rpx;
   margin-bottom: 24rpx;
-  box-shadow: 0 8rpx 24rpx rgba(23, 63, 54, 0.15);
+  box-shadow: 0 8rpx 24rpx rgba(23, 63, 54, 0.05);
 }
 
 .pcsv-label {
   font-size: 24rpx;
-  color: #b9d8ca;
+  font-weight: 500;
+  color: #5c796c;
 }
 
 .pcsv-amount {
-  font-size: 64rpx;
+  font-size: 66rpx;
   font-weight: 800;
-  color: #52e3b6;
-  margin: 12rpx 0;
-  line-height: 1.1;
+  color: #12382f;
+  margin: 12rpx 0 20rpx 0;
+  line-height: 1.05;
+  letter-spacing: -1.5rpx;
 }
 
-.pcsv-note-row {
+.pcsv-desc-box {
+  margin-top: 0;
+  margin-bottom: 24rpx;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 10rpx;
 }
 
-.pcsv-note {
+.pcsv-desc-source {
   font-size: 22rpx;
-  color: #92b8a6;
+  font-weight: 600;
+  color: #436657;
+  line-height: 1.35;
+  white-space: nowrap;
 }
 
-.pcsv-lab-link {
-  font-size: 20rpx;
-  font-weight: 700;
-  color: #52e3b6;
-  background: rgba(82, 227, 182, 0.15);
-  padding: 6rpx 16rpx;
-  border-radius: 12rpx;
+.pcsv-desc-basis {
+  font-size: 21rpx;
+  color: #728f81;
+  line-height: 1.35;
+  white-space: nowrap;
 }
 
 .stacked-bar {
@@ -125,18 +126,18 @@
   height: 20rpx;
   border-radius: 10rpx;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.2);
-  margin-top: 26rpx;
+  background: #e2ede6;
 }
 
 .bar-seg {
   height: 100%;
 }
 
-.bar-seg.working { background: #52e3b6; }
+/* 建议 3：堆叠条各段与下方 4 维度圆点 100% 严格同色系对应 */
+.bar-seg.working { background: #1b8166; }
 .bar-seg.pension { background: #38a385; }
 .bar-seg.tv { background: #f59e0b; }
-.bar-seg.nav { background: #60a5fa; }
+.bar-seg.nav { background: #3b82f6; }
 
 /* 四维度明细卡片 */
 .grid-dimensions {
@@ -153,16 +154,6 @@
   border-radius: 20rpx;
 }
 
-.dim-card.clickable {
-  position: relative;
-  transition: transform 0.15s, background-color 0.15s;
-}
-
-.dim-card.clickable:active {
-  transform: scale(0.98);
-  background: #f8fbf9;
-}
-
 .dim-header {
   display: flex;
   align-items: center;
@@ -176,7 +167,7 @@
   border-radius: 50%;
 }
 
-.working-dot { background: #267a63; }
+.working-dot { background: #1b8166; }
 .pension-dot { background: #38a385; }
 .tv-dot { background: #f59e0b; }
 .nav-dot { background: #3b82f6; }
@@ -184,13 +175,6 @@
 .dim-title {
   font-size: 24rpx;
   color: #577366;
-}
-
-.dim-arrow {
-  margin-left: auto;
-  font-size: 26rpx;
-  color: #9cb3a8;
-  font-weight: 800;
 }
 
 .dim-val {
@@ -205,7 +189,7 @@
   color: #7b9689;
 }
 
-/* 智能诊断结论卡片 */
+/* 智能诊断结论卡片（纯粹深度洞察） */
 .diagnosis-card {
   background: #ffffff;
   border: 2rpx solid #dce8e1;
@@ -213,7 +197,7 @@
   border-radius: 20rpx;
   padding: 26rpx;
   margin-top: 8rpx;
-  margin-bottom: 26rpx;
+  margin-bottom: 24rpx;
 }
 
 .diagnosis-card.warning {
@@ -233,68 +217,93 @@
 .diagnosis-header {
   display: flex;
   align-items: center;
-  gap: 12rpx;
-  margin-bottom: 10rpx;
+  justify-content: space-between;
+  margin-bottom: 14rpx;
+}
+
+.diagnosis-title {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #173f36;
 }
 
 .diagnosis-badge {
-  font-size: 22rpx;
-  font-weight: 700;
-  padding: 4rpx 14rpx;
-  border-radius: 8rpx;
+  font-size: 21rpx;
+  font-weight: 600;
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
   background: #eaf3ee;
   color: #173f36;
+  border: 1rpx solid #cce1d6;
 }
 
 .diagnosis-card.warning .diagnosis-badge {
   background: #feebe5;
   color: #ea580c;
+  border-color: #fcd5c7;
 }
 
-.diagnosis-title {
-  font-size: 24rpx;
-  font-weight: 600;
-  color: #5c796c;
+.diagnosis-card.success .diagnosis-badge {
+  background: #eaf6ef;
+  color: #1b8166;
+  border-color: #c0e2d1;
 }
 
 .diagnosis-body {
   font-size: 24rpx;
   color: #3b574a;
-  line-height: 1.5;
+  line-height: 1.6;
+}
+
+/* 底部独立快捷操作区（行动引导终点站） */
+.workbench-quick-actions {
+  margin-top: 8rpx;
+  margin-bottom: 24rpx;
+}
+
+.quick-actions-tip {
+  font-size: 21rpx;
+  color: #6b887b;
   margin-bottom: 14rpx;
+  line-height: 1.4;
+  padding-left: 4rpx;
 }
 
-.diagnosis-micro-tip {
-  font-size: 20rpx;
-  color: #7b9689;
-  margin-bottom: 12rpx;
-}
-
-.diagnosis-action-row {
+.quick-actions-row {
   display: flex;
   gap: 16rpx;
 }
 
-.action-btn-primary {
-  flex: 1;
-  text-align: center;
-  font-size: 23rpx;
-  font-weight: 700;
-  color: #ffffff;
-  background: #173f36;
-  padding: 12rpx 0;
-  border-radius: 12rpx;
-}
-
+.action-btn-primary,
 .action-btn-secondary {
   flex: 1;
-  text-align: center;
-  font-size: 23rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14rpx;
+  font-size: 24rpx;
   font-weight: 700;
   color: #173f36;
   background: #e2f0e8;
-  padding: 12rpx 0;
-  border-radius: 12rpx;
+  border: 1.5rpx solid #c8ded2;
+  padding: 16rpx 0;
+  border-radius: 16rpx;
+  transition: all 0.2s ease;
+  box-shadow: 0 4rpx 12rpx rgba(23, 63, 54, 0.03);
+}
+
+.action-arrow {
+  font-size: 26rpx;
+  font-weight: 700;
+  line-height: 1;
+  margin-top: -2rpx;
+  color: #3b574a;
+}
+
+.action-btn-primary:active,
+.action-btn-secondary:active {
+  background: #d4eada;
+  transform: scale(0.98);
 }
 
 /* 底表清单 (Tab 1) */

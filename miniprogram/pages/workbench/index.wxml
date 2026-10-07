@@ -12,23 +12,20 @@
     <!-- 口径切换胶囊 -->
     <view class="basis-switch-row">
       <view class="basis-pill {{profile.basis === 'income_capacity' ? 'active' : ''}}" data-basis="income_capacity" bindtap="toggleBasis">
-        收入能力口径 (Gross)
+        收入能力 (Gross)
       </view>
       <view class="basis-pill {{profile.basis === 'disposable_cashflow' ? 'active' : ''}}" data-basis="disposable_cashflow" bindtap="toggleBasis">
-        可支配自由现金流 (Net PFCF)
+        可支配现金流 (Net PFCF)
       </view>
-    </view>
-    <view class="basis-tip">
-      {{profile.basis === 'income_capacity' ? '当前口径不扣除生活支出与房贷，反映收入系统折现产出。' : '当前口径已扣除基本生活与房贷月供，反映真实可支配自由现金流。'}}
     </view>
 
     <!-- 现值瀑布总卡 -->
     <view class="pcsv-summary-card">
       <view class="pcsv-label">个人现金流系统总现值 (PCSV)</view>
       <view class="pcsv-amount">{{displayPcsv}}</view>
-      <view class="pcsv-note-row">
-        <text class="pcsv-note">折现率 {{displayDiscountRate}} · 显性工作至 {{profile.expectedRetirementAge}} 岁</text>
-        <text class="pcsv-lab-link" bindtap="goToLabTab">调参实验室 🧪</text>
+      <view class="pcsv-desc-box">
+        <text class="pcsv-desc-source">初测基准中位值 · 折现率 {{displayDiscountRate}} · 工作至 {{profile.expectedRetirementAge}} 岁</text>
+        <text class="pcsv-desc-basis">{{profile.basis === 'income_capacity' ? '未扣除生活与房贷，反映税后总收入折现' : '已扣除生活与房贷月供，反映净自由现金流折现'}}</text>
       </view>
 
       <!-- 四段式堆叠条 -->
@@ -40,60 +37,66 @@
       </view>
     </view>
 
-    <!-- 四维度明细卡片（支持点击下钻钻取底表） -->
+    <!-- 四维度明细卡片（纯数据展示大盘） -->
     <view class="grid-dimensions">
-      <view class="dim-card clickable" data-target="working" bindtap="onDimensionTap">
+      <view class="dim-card">
         <view class="dim-header">
           <view class="dim-dot working-dot"></view>
           <text class="dim-title">显性工作期现值</text>
-          <text class="dim-arrow">›</text>
         </view>
         <view class="dim-val">{{forwardResult.workingWan}} 万</view>
         <view class="dim-ratio">占比 {{forwardResult.ratios.workingRatio}}%</view>
       </view>
 
-      <view class="dim-card clickable" data-target="pension" bindtap="onDimensionTap">
+      <view class="dim-card">
         <view class="dim-header">
           <view class="dim-dot pension-dot"></view>
           <text class="dim-title">退休后有限年金</text>
-          <text class="dim-arrow">›</text>
         </view>
         <view class="dim-val">{{forwardResult.pensionWan}} 万</view>
         <view class="dim-ratio">占比 {{forwardResult.ratios.pensionRatio}}%</view>
       </view>
 
-      <view class="dim-card clickable" data-target="tv" bindtap="onDimensionTap">
+      <view class="dim-card">
         <view class="dim-header">
           <view class="dim-dot tv-dot"></view>
           <text class="dim-title">严格终值现值</text>
-          <text class="dim-arrow">›</text>
         </view>
         <view class="dim-val">{{forwardResult.strictTvWan}} 万</view>
         <view class="dim-ratio">占比 {{forwardResult.ratios.strictTvRatio}}%</view>
       </view>
 
-      <view class="dim-card clickable" data-target="nav" bindtap="onDimensionTap">
+      <view class="dim-card">
         <view class="dim-header">
           <view class="dim-dot nav-dot"></view>
           <text class="dim-title">资产净值 (NAV)</text>
-          <text class="dim-arrow">›</text>
         </view>
         <view class="dim-val">{{forwardResult.netNavWan}} 万</view>
         <view class="dim-ratio">占比 {{forwardResult.ratios.navRatio}}%</view>
       </view>
     </view>
 
-    <!-- 智能诊断结论卡片（双通道校准引导） -->
+    <!-- 智能诊断结论卡片（纯粹深度洞察） -->
     <view class="diagnosis-card {{diagnosisInfo.level}}" wx:if="{{diagnosisInfo}}">
       <view class="diagnosis-header">
-        <text class="diagnosis-badge">{{diagnosisInfo.badge}}</text>
         <text class="diagnosis-title">系统诊断洞察</text>
+        <text class="diagnosis-badge">{{diagnosisInfo.badge}}</text>
       </view>
       <view class="diagnosis-body">{{diagnosisInfo.text}}</view>
-      <view class="diagnosis-micro-tip">系统总现值由『现金流底表』与『折现假设』共同驱动：</view>
-      <view class="diagnosis-action-row">
-        <view class="action-btn-primary" bindtap="goToSheetTab">🛠️ 校准现金流底表</view>
-        <view class="action-btn-secondary" bindtap="goToLabTab">🧪 调整折现假设 (r/g)</view>
+    </view>
+
+    <!-- 底部独立快捷操作区（行动引导终点站） -->
+    <view class="workbench-quick-actions">
+      <view class="quick-actions-tip">当前数据继承自上一阶段测算，可在下方进行手动调整校准：</view>
+      <view class="quick-actions-row">
+        <view class="action-btn-primary" bindtap="goToSheetTab">
+          <text>🛠️ 校准现金流底表</text>
+          <text class="action-arrow">›</text>
+        </view>
+        <view class="action-btn-secondary" bindtap="goToLabTab">
+          <text>🧪 调整折现假设 (r/g)</text>
+          <text class="action-arrow">›</text>
+        </view>
       </view>
     </view>
   </view>

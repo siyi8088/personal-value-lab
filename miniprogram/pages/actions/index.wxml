@@ -29,6 +29,6 @@
     <text class="wb-teaser-side-arrow">›</text>
   </view>
 
-  <button class="secondary-button back-btn" bindtap="backToResult">回到我的结构图</button>
+  <button class="secondary-button back-btn" bindtap="backToResult">返回测算结果</button>
   <view class="notice">行动建议仅供自我规划参考，不构成职业、投资或财务建议。</view>
 </view>

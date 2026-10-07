@@ -161,7 +161,7 @@
   <!-- Bottom Navigation Buttons -->
   <view class="bottom-actions">
     <button class="secondary-button back" bindtap="previous">{{step === 0 ? '返回' : '上一题'}}</button>
-    <button class="primary-button next" bindtap="next">{{step === totalSteps - 1 ? '生成我的 DCF 结构图' : '继续'}}</button>
+    <button class="primary-button next" bindtap="next">{{step === totalSteps - 1 ? '查看测算结果' : '继续'}}</button>
   </view>
 
   <view class="notice">数据仅在本地运算，不上传服务器，绝不用于身价排名。</view>
