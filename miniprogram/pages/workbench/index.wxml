@@ -142,22 +142,19 @@
       </view>
     </view>
 
-    <!-- 3. 资产法与收益法防双计 (支持新增、编辑、删除) -->
+    <!-- 3. 存量净资产储备 (NAV) (支持新增、编辑、删除) -->
     <view class="sheet-section">
       <view class="section-top">
-        <view class="title-with-help">
-          <text class="section-title">🏦 资产与负债 ({{profile.assets.length || 0}}项)</text>
-          <text class="help-circle" bindtap="showNavHelpModal">?</text>
-        </view>
+        <text class="section-title">🏦 存量净资产储备 ({{profile.assets.length || 0}}项)</text>
         <text class="add-btn" bindtap="openAddAssetModal">+ 添加资产</text>
       </view>
       <view wx:for="{{profile.assets}}" wx:key="id" class="stream-item">
         <view class="stream-info">
           <view class="stream-title-row">
             <text class="stream-name">{{item.name}}</text>
-            <text class="stream-badge-nav">{{item.valuationMethod === 'nav' ? '资产法(NAV)' : '收益法(DCF)'}}</text>
+            <text class="stream-badge-nav">净资产 (NAV)</text>
           </view>
-          <text class="stream-desc">保守净值 {{item.conservativeValue / 10000}}万</text>
+          <text class="stream-desc">保守变现净值 {{item.conservativeValue / 10000}}万</text>
         </view>
         <view class="stream-action">
           <text class="edit-btn" data-id="{{item.id}}" bindtap="openEditAssetModal">编辑</text>
@@ -166,7 +163,9 @@
       </view>
     </view>
 
-    <button class="secondary-button" bindtap="resetAll">恢复默认底表数据</button>
+    <view class="reset-link-row">
+      <view class="reset-link-btn" bindtap="resetAll">↺ 恢复为测算默认底表</view>
+    </view>
   </view>
 
   <!-- TAB 2: 假设实验室 -->
@@ -174,32 +173,94 @@
     <view class="lab-card">
       <view class="slider-group">
         <view class="slider-header">
-          <text>风险调整折现率 r (步长 0.1%)</text>
+          <text class="slider-name">风险调整折现率 r (步长 0.5%)</text>
           <text class="slider-val">{{displayDiscountRate}}</text>
         </view>
-        <slider min="20" max="70" step="1" value="{{discountRateSlider}}" data-field="discountRate" bindchange="onRateChange" activeColor="#173f36"></slider>
+        <slider
+          min="20"
+          max="70"
+          step="5"
+          value="{{discountRateSlider}}"
+          data-field="discountRate"
+          bindchange="onRateChange"
+          activeColor="#173f36"
+          backgroundColor="#e2ede7"
+          block-size="18"
+          block-color="#ffffff"
+        ></slider>
+        <view class="ruler-scale">
+          <view
+            wx:for="{{rTicks}}"
+            wx:key="val"
+            class="ruler-tick {{item.isMajor ? 'major' : 'minor'}}"
+            data-field="discountRate"
+            data-val="{{item.val}}"
+            bindtap="onSelectTick"
+          >
+            <view class="ruler-tick-line {{item.isMajor ? 'major' : 'minor'}}"></view>
+            <text class="ruler-tick-label" wx:if="{{item.label}}">{{item.label}}</text>
+          </view>
+        </view>
         <view class="slider-tip">包含时间价值与个人职业中断风险；折现率越高，系统现值越保守。</view>
       </view>
 
       <view class="slider-group">
         <view class="slider-header">
-          <text>长期保守增长率 g (步长 0.1%)</text>
+          <text class="slider-name">长期保守增长率 g (步长 0.25%)</text>
           <text class="slider-val">{{displayGrowthRate}}</text>
         </view>
-        <slider min="0" max="20" step="1" value="{{terminalGrowthRateSlider}}" data-field="terminalGrowthRate" bindchange="onRateChange" activeColor="#173f36"></slider>
+        <slider
+          min="0"
+          max="250"
+          step="25"
+          value="{{terminalGrowthRateSlider}}"
+          data-field="terminalGrowthRate"
+          bindchange="onRateChange"
+          activeColor="#173f36"
+          backgroundColor="#e2ede7"
+          block-size="18"
+          block-color="#ffffff"
+        ></slider>
+        <view class="ruler-scale">
+          <view
+            wx:for="{{gTicks}}"
+            wx:key="val"
+            class="ruler-tick {{item.isMajor ? 'major' : 'minor'}}"
+            data-field="terminalGrowthRate"
+            data-val="{{item.val}}"
+            bindtap="onSelectTick"
+          >
+            <view class="ruler-tick-line {{item.isMajor ? 'major' : 'minor'}}"></view>
+            <text class="ruler-tick-label" wx:if="{{item.label}}">{{item.label}}</text>
+          </view>
+        </view>
         <view class="slider-tip">仅适用于独立持续造血引擎；受 r > g 与宏观经济上限约束。</view>
 
-        <!-- 当无造血资产时的醒目琥珀色说明卡片 -->
+        <!-- 当无造血资产时的温润紧凑说明卡片 -->
         <view wx:if="{{!hasTvEngine}}" class="g-inactive-alert">
-          <view class="g-alert-header">
-            <text class="g-alert-icon">⚠️</text>
-            <text class="g-alert-title">当前增长率 g 未生效说明</text>
+          <view class="g-alert-top">
+            <view class="g-alert-header">
+              <text class="g-alert-icon">💡</text>
+              <text class="g-alert-title">当前增长率 g 未生效说明</text>
+            </view>
+            <view class="g-alert-btn" bindtap="goToAddTvStream">+ 快速配置造血资产 →</view>
           </view>
           <view class="g-alert-desc">
-            永续增长率 g 仅对脱离个人打卡的“独立持续造血资产”（如出租物业、自营分红、版权订阅）生效。你当前底表均为肉身打卡工薪与固定养老金，因此调整 g 现值保持不变。
+            永续增速 g 仅对脱离打卡的独立造血业务生效（如出租物业、自营分红、长尾版权）；当前底表均为工薪与基本养老金。
           </view>
-          <view class="g-alert-action" bindtap="goToAddTvStream">
-            <text class="g-alert-btn">+ 去底表配置一项造血资产 →</text>
+        </view>
+
+        <!-- 当已激活造血资产后的温润浅绿状态卡片 (解法一：原位环境态留痕) -->
+        <view wx:if="{{hasTvEngine && showTvActivatedBanner}}" class="g-active-banner">
+          <view class="g-active-top">
+            <view class="g-active-header">
+              <text class="g-active-icon">🌿</text>
+              <text class="g-active-title">造血引擎已激活，滑动 g 即可实时联动！</text>
+            </view>
+            <text class="g-active-close" bindtap="dismissTvActivatedBanner">✕</text>
+          </view>
+          <view class="g-active-body" bindtap="goToSheetTab">
+            <text class="g-active-desc">💡 该造血业务已同步收录至「现金流底表」，随时可 <text class="g-active-link">前往查看 →</text></text>
           </view>
         </view>
       </view>
@@ -207,9 +268,9 @@
 
     <!-- 敏感性热力图矩阵 (实时联动，无需刷新按钮) -->
     <view class="matrix-section" wx:if="{{sensitivityResult}}">
-      <view class="matrix-title">
-        r × g 敏感性热力矩阵 (系统总现值·万元)
-        <text wx:if="{{!hasTvEngine}}" class="matrix-inactive-sub">（当前无终值资产，各 g 档位现值持平）</text>
+      <view class="matrix-header">
+        <view class="matrix-title">r × g 敏感性热力矩阵 (系统总现值·万元)</view>
+        <view wx:if="{{!hasTvEngine}}" class="matrix-inactive-sub">⚠️ 当前未配置独立造血资产，各 g 档位现值持平</view>
       </view>
       <view class="matrix-table">
         <view class="matrix-row header">
@@ -229,15 +290,24 @@
       </view>
     </view>
 
-    <!-- r 与 g 的概念普及（已移至假设实验室最后） -->
+    <!-- r 与 g 的概念普及（默认折叠，保证首屏一屏尽览） -->
     <view class="concept-intro-card">
-      <view class="concept-item">
-        <text class="concept-title">📌 折现率 r (时间价值与中断风险)</text>
-        <text class="concept-desc">给未来打折的程度。现在的 100 元比 10 年后更值钱；r 由无风险收益（约 2%）+ 个人收入中断/健康风险溢价构成。r 设得越高，远期收入折现缩水越严重。</text>
+      <view class="concept-header" bindtap="toggleConceptIntro">
+        <view class="concept-header-left">
+          <text class="concept-header-icon">💡</text>
+          <text class="concept-header-title">r 与 g 核心参数与严肃约束说明</text>
+        </view>
+        <text class="concept-arrow">{{showConceptIntro ? '收起 ▴' : '展开 ▾'}}</text>
       </view>
-      <view class="concept-item">
-        <text class="concept-title">🌱 永续增长率 g (脱离打卡能力)</text>
-        <text class="concept-desc">仅适用于能脱离肉身打卡的独立造血业务。宏观上任何资产永续增速都不应超过 GDP 名义增速（0%~1.5%），且必须受严格数学约束 r > g。</text>
+      <view class="concept-body" wx:if="{{showConceptIntro}}">
+        <view class="concept-item">
+          <text class="concept-title">📌 折现率 r (时间价值与中断风险)</text>
+          <text class="concept-desc">给未来打折的程度。现在的 100 元比 10 年后更值钱；r 由无风险收益（约 2%）+ 个人收入中断/健康风险溢价构成。r 设得越高，远期收入折现缩水越严重。</text>
+        </view>
+        <view class="concept-item">
+          <text class="concept-title">🌱 永续增长率 g (脱离打卡能力)</text>
+          <text class="concept-desc">仅适用于能脱离肉身打卡的独立造血业务。宏观上任何资产永续增速都不应超过 GDP 名义增速（0%~2.5%），且必须受严格数学约束 r > g。</text>
+        </view>
       </view>
     </view>
   </view>
@@ -250,7 +320,17 @@
         <text class="goal-label">设定目标系统现值 V*</text>
         <text class="goal-val edit-target" bindtap="openTargetInputModal">{{targetValueWan}} 万元 ✎</text>
       </view>
-      <slider min="50" max="1000" step="10" value="{{targetValueWan}}" bindchange="onTargetSlider" activeColor="#173f36"></slider>
+      <slider
+        min="50"
+        max="1000"
+        step="10"
+        value="{{targetValueWan}}"
+        bindchange="onTargetSlider"
+        activeColor="#173f36"
+        backgroundColor="#e2ede7"
+        block-size="18"
+        block-color="#ffffff"
+      ></slider>
       <view class="gap-row">
         <text>现有系统现值：{{reverseResult.vKnownWan}}万</text>
         <text class="gap-text">价值缺口：{{reverseResult.gapWan}}万</text>
@@ -395,10 +475,25 @@
       <!-- 6. 脱离打卡造血能力 -->
       <view class="form-group switch-group">
         <view class="switch-left">
-          <view class="form-label">脱离打卡独立造血</view>
-          <view class="form-tip">开启后，退休后将纳入严格终值（Gordon永续模型）折现</view>
+          <view class="switch-title-row">
+            <text class="form-label">脱离打卡独立造血</text>
+            <text class="info-icon" bindtap="showTvExplanation">ⓘ</text>
+          </view>
+          <view class="form-tip" wx:if="{{newStream.kind === 'labor'}}">
+            主要受雇工薪随离职/退休终止，恪守严肃 DCF 纪律，不计入永续终值
+          </view>
+          <view class="form-tip" wx:elif="{{newStream.kind === 'side_job'}}">
+            {{newStream.supportsTerminalValue ? '已开启：适用于自媒体长尾、独立软件等自动化造血副业' : '适用于按时计费兼职；若属于自媒体长尾或独立软件，可手动开启'}}
+          </view>
+          <view class="form-tip" wx:else>
+            开启后，退休后将纳入严格终值（Gordon永续模型）折现
+          </view>
         </view>
-        <switch checked="{{newStream.supportsTerminalValue}}" bindchange="onTerminalSwitch" color="#173f36" />
+        <switch checked="{{newStream.supportsTerminalValue}}" disabled="{{newStream.kind === 'labor'}}" bindchange="onTerminalSwitch" color="#173f36" />
+      </view>
+
+      <view class="modal-footer-tip">
+        💡 提示：保存后将收录至「现金流底表」，后续可随时在底表中进行编辑或删除。
       </view>
 
       <!-- 紧凑小按钮 -->
@@ -467,32 +562,24 @@
     </view>
   </view>
 
-  <!-- 浮动弹窗 3：添加 / 编辑资产负债 -->
+  <!-- 浮动弹窗 3：添加 / 编辑存量资产 -->
   <view wx:if="{{showAssetModal}}" class="modal-mask">
     <view class="modal-box">
-      <view class="modal-title">{{isEditingAsset ? '编辑资产' : '添加资产'}}</view>
+      <view class="modal-title">{{isEditingAsset ? '编辑存量资产' : '添加存量资产'}}</view>
 
-      <view class="form-group">
-        <view class="form-label">计价估值方法 (防双重计价核心)</view>
-        <view class="kind-pill-row">
-          <view wx:for="{{assetMethods}}" wx:key="id" class="kind-pill {{assetForm.valuationMethod === item.id ? 'active' : ''}}" data-method="{{item.id}}" bindtap="selectAssetMethod">
-            {{item.label}}
-          </view>
-        </view>
-        <view class="form-tip-box">
-          {{assetForm.valuationMethod === 'nav' ? '资产法 (NAV)：按当前保守清算变现价值计入总现值；该资产不可再折现未来现金流。' : '收益法 (DCF)：该资产产生的租金/分红已在收入流中折现，禁止再计入净资产本金！'}}
-        </view>
+      <view class="form-tip-box" style="margin-top: 0; margin-bottom: 20rpx;">
+        💡 按当前保守变现净值计入系统底层储备 (NAV)。若已有出租物业或自营分红在上方登记，请勿在此重复计入房产或本金，防双重计价。
       </view>
 
       <view class="form-group">
         <view class="form-label">资产名称</view>
-        <input class="modal-input" placeholder="输入名称 (如流动定存、自住房屋)" placeholder-class="input-placeholder-gray" value="{{assetForm.name}}" data-field="name" bindinput="onAssetInput" />
+        <input class="modal-input" placeholder="输入名称 (如流动资金与定存、自住房净值)" placeholder-class="input-placeholder-gray" value="{{assetForm.name}}" data-field="name" bindinput="onAssetInput" />
       </view>
 
       <view class="form-group">
         <view class="form-label-row">
           <text class="form-label">保守变现净值 (元)</text>
-          <text class="form-tip">资产法口径计入NAV</text>
+          <text class="form-tip">计入系统 NAV</text>
         </view>
         <input class="modal-input" type="number" placeholder="如 100000" placeholder-class="input-placeholder-gray" value="{{assetForm.conservativeValue}}" data-field="conservativeValue" bindinput="onAssetInput" />
         <view class="quick-pill-row">
@@ -543,6 +630,24 @@
         <view class="modal-btn cancel" bindtap="closeTargetModal">取消</view>
         <view class="modal-btn confirm" bindtap="confirmTargetInput">确认设定</view>
       </view>
+    </view>
+  </view>
+
+  <!-- 自定义方法论/说明弹窗（与轻量版同款高质感弹窗） -->
+  <view wx:if="{{showExplanationModal}}" class="modal-mask" bindtap="closeExplanationModal">
+    <view class="rules-modal-box" catchtap="noop">
+      <view class="rules-modal-title">{{explanationTitle}}</view>
+      <view class="rules-modal-body">
+        <view class="rules-lead" wx:if="{{explanationLead}}">{{explanationLead}}</view>
+        <view wx:for="{{explanationItems}}" wx:key="index" class="rules-item">
+          <text class="num">•</text>
+          <view class="rules-item-content">
+            <text class="rules-item-title" wx:if="{{item.title}}">{{item.title}}：</text>
+            <text class="rules-item-desc">{{item.desc}}</text>
+          </view>
+        </view>
+      </view>
+      <button class="rules-close-btn" bindtap="closeExplanationModal">我明白了</button>
     </view>
   </view>
 </view>

@@ -441,12 +441,12 @@
   background: #ffffff;
   border: 2rpx solid #dce8e1;
   border-radius: 24rpx;
-  padding: 30rpx;
-  margin-bottom: 28rpx;
+  padding: 26rpx 28rpx;
+  margin-bottom: 24rpx;
 }
 
 .slider-group {
-  margin-bottom: 30rpx;
+  margin-bottom: 24rpx;
 }
 
 .slider-group:last-child {
@@ -457,38 +457,98 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 2rpx;
+}
+
+.slider-name {
   font-size: 28rpx;
-  font-weight: 600;
+  font-weight: 700;
   color: #173f36;
 }
 
 .slider-val {
-  font-size: 32rpx;
+  font-size: 34rpx;
   font-weight: 800;
-  color: #246e5b;
+  color: #1b8166;
+}
+
+.slider-group slider,
+.goal-slider-box slider {
+  margin: 14rpx 10rpx 4rpx 10rpx;
+}
+
+/* 主刻度标尺 (Major Ticks) */
+.ruler-scale {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 16rpx;
+  margin-top: 2rpx;
+  margin-bottom: 12rpx;
+}
+
+.ruler-tick {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 44rpx;
+  cursor: pointer;
+}
+
+.ruler-tick-line.major {
+  width: 2.5rpx;
+  height: 12rpx;
+  background: #173f36;
+  margin-bottom: 6rpx;
+  border-radius: 1rpx;
+}
+
+.ruler-tick-line.minor {
+  width: 1.5rpx;
+  height: 7rpx;
+  background: #96b8a8;
+  margin-bottom: 6rpx;
+  border-radius: 1rpx;
+}
+
+.ruler-tick-label {
+  font-size: 22rpx;
+  color: #4b6a5d;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.ruler-tick:active .ruler-tick-label {
+  color: #173f36;
+  font-weight: 800;
 }
 
 .slider-tip {
-  margin-top: 10rpx;
-  font-size: 22rpx;
-  color: #7b9689;
-  line-height: 1.4;
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #4f6f60;
+  line-height: 1.5;
 }
 
-/* g 未生效琥珀色说明卡片 */
+/* g 未生效温润轻量说明卡片 */
 .g-inactive-alert {
   margin-top: 18rpx;
-  background: #fffbf4;
-  border: 2rpx solid #fed7aa;
+  background: #fbf9f5;
+  border: 1.5rpx solid #eadecf;
   border-radius: 16rpx;
-  padding: 20rpx;
+  padding: 18rpx 20rpx;
+}
+
+.g-alert-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10rpx;
 }
 
 .g-alert-header {
   display: flex;
   align-items: center;
-  gap: 10rpx;
-  margin-bottom: 8rpx;
+  gap: 8rpx;
 }
 
 .g-alert-icon {
@@ -496,53 +556,130 @@
 }
 
 .g-alert-title {
-  font-size: 24rpx;
+  font-size: 25rpx;
   font-weight: 700;
-  color: #c2410c;
-}
-
-.g-alert-desc {
-  font-size: 21rpx;
-  color: #7c2d12;
-  line-height: 1.45;
-  margin-bottom: 12rpx;
-}
-
-.g-alert-action {
-  display: flex;
-  justify-content: flex-end;
+  color: #8c602a;
 }
 
 .g-alert-btn {
   font-size: 22rpx;
-  font-weight: 700;
-  color: #ffffff;
-  background: #ea580c;
-  padding: 8rpx 18rpx;
-  border-radius: 10rpx;
+  font-weight: 600;
+  color: #173f36;
+  background: #e5f1ea;
+  border: 1.5rpx solid #b5d9c7;
+  padding: 6rpx 16rpx;
+  border-radius: 12rpx;
+  transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
-/* 敏感性热力矩阵 */
+.g-alert-btn:active {
+  background: #cce7d8;
+}
+
+.g-alert-desc {
+  font-size: 23rpx;
+  color: #6d5b45;
+  line-height: 1.55;
+  margin-bottom: 0;
+}
+
+/* 造血引擎激活后的浅绿状态卡片 (原位环境态留痕) */
+.g-active-banner {
+  margin-top: 18rpx;
+  background: #f2f8f4;
+  border: 1.5rpx solid #bfe0cf;
+  border-radius: 16rpx;
+  padding: 18rpx 20rpx;
+}
+
+.g-active-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8rpx;
+}
+
+.g-active-header {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.g-active-icon {
+  font-size: 24rpx;
+}
+
+.g-active-title {
+  font-size: 24rpx;
+  font-weight: 700;
+  color: #173f36;
+}
+
+.g-active-close {
+  font-size: 24rpx;
+  color: #7b988b;
+  padding: 2rpx 10rpx;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.g-active-close:active {
+  color: #173f36;
+}
+
+.g-active-body {
+  margin-top: 6rpx;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.g-active-desc {
+  font-size: 22rpx;
+  color: #4b6b5c;
+  line-height: 1.55;
+  word-break: break-all;
+}
+
+.g-active-link {
+  font-size: 22rpx;
+  font-weight: 700;
+  color: #1b8166;
+  text-decoration: underline;
+  text-underline-offset: 4rpx;
+  display: inline;
+}
+
+.g-active-body:active .g-active-link {
+  opacity: 0.7;
+}
+
+/* 敏感性热力矩阵 (紧凑扁平化 + 温润翡翠色梯) */
 .matrix-section {
   background: #ffffff;
   border: 2rpx solid #dce8e1;
   border-radius: 24rpx;
-  padding: 30rpx;
-  margin-bottom: 26rpx;
+  padding: 26rpx;
+  margin-bottom: 22rpx;
+}
+
+.matrix-header {
+  margin-bottom: 18rpx;
 }
 
 .matrix-title {
-  font-size: 27rpx;
+  font-size: 28rpx;
   font-weight: 700;
   color: #173f36;
-  margin-bottom: 20rpx;
 }
 
 .matrix-inactive-sub {
-  font-size: 20rpx;
-  font-weight: normal;
-  color: #ea580c;
-  margin-left: 8rpx;
+  display: block;
+  font-size: 22rpx;
+  font-weight: 500;
+  color: #c2541a;
+  margin-top: 6rpx;
+  line-height: 1.4;
 }
 
 .matrix-table {
@@ -562,8 +699,8 @@
 .matrix-cell {
   flex: 1;
   text-align: center;
-  padding: 14rpx 4rpx;
-  font-size: 22rpx;
+  padding: 6rpx 2rpx;
+  font-size: 23rpx;
   color: #2b493f;
   border-right: 1rpx solid #eef3f0;
   border-bottom: 1rpx solid #eef3f0;
@@ -572,25 +709,34 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 60rpx;
+  min-height: 48rpx;
 }
 
 .matrix-cell.th {
   font-weight: 700;
   color: #173f36;
   background: #eaf2ed;
+  font-size: 23rpx;
+  min-height: 44rpx;
 }
 
 .matrix-cell.row-th {
   font-weight: 700;
   color: #173f36;
   background: #eaf2ed;
+  font-size: 23rpx;
 }
 
-/* 热力色阶梯度 */
+.cell-text {
+  font-size: 24rpx;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+/* 热力色阶梯度（优雅翡翠色系，最高档换成透气清爽的 #38866d，消除深黑感） */
 .matrix-cell.heat-0 {
-  background: #f3f5f4;
-  color: #a4b5ad;
+  background: #f4f6f5;
+  color: #9cb0a5;
 }
 
 .matrix-cell.heat-1 {
@@ -599,40 +745,40 @@
 }
 
 .matrix-cell.heat-2 {
-  background: #e4f3eb;
+  background: #e4f2ea;
   color: #214d3e;
 }
 
 .matrix-cell.heat-3 {
-  background: #b8dece;
-  color: #133d2f;
+  background: #b5decc;
+  color: #123e30;
   font-weight: 600;
 }
 
 .matrix-cell.heat-4 {
-  background: #5ea88f;
+  background: #6ebd9f;
   color: #ffffff;
   font-weight: 700;
 }
 
 .matrix-cell.heat-5 {
-  background: #173f36;
+  background: #38866d;
   color: #ffffff;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 /* 当前中心坐标高亮 */
 .matrix-cell.is-center {
-  outline: 4rpx solid #d4af37;
-  outline-offset: -3rpx;
+  outline: 3rpx solid #c89d28;
+  outline-offset: -2rpx;
   z-index: 2;
-  box-shadow: 0 0 10rpx rgba(212, 175, 55, 0.4);
+  box-shadow: 0 0 8rpx rgba(200, 157, 40, 0.35);
 }
 
 .center-tag {
   font-size: 15rpx;
   font-weight: 800;
-  color: #d4af37;
+  color: #c89d28;
   margin-top: 2rpx;
   line-height: 1;
 }
@@ -642,23 +788,58 @@
 }
 
 .matrix-note {
-  margin-top: 18rpx;
-  font-size: 22rpx;
-  color: #789688;
-  line-height: 1.4;
+  margin-top: 16rpx;
+  font-size: 23rpx;
+  color: #5a7b6d;
+  line-height: 1.5;
 }
 
-/* 概念解释卡片（放最底端） */
+/* 概念解释可折叠卡片（放最底端，默认折叠实现一屏纯净呈现） */
 .concept-intro-card {
   background: #ffffff;
   border: 2rpx solid #dce8e1;
   border-radius: 20rpx;
-  padding: 24rpx;
+  padding: 22rpx 26rpx;
   margin-top: 10rpx;
+  margin-bottom: 24rpx;
+  transition: all 0.25s ease;
+}
+
+.concept-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.concept-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.concept-header-icon {
+  font-size: 26rpx;
+}
+
+.concept-header-title {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #173f36;
+}
+
+.concept-arrow {
+  font-size: 23rpx;
+  color: #5c796c;
+}
+
+.concept-body {
+  margin-top: 16rpx;
+  padding-top: 16rpx;
+  border-top: 1rpx dashed #dce8e1;
 }
 
 .concept-item {
-  margin-bottom: 18rpx;
+  margin-bottom: 16rpx;
 }
 
 .concept-item:last-child {
@@ -667,17 +848,17 @@
 
 .concept-title {
   display: block;
-  font-size: 25rpx;
+  font-size: 26rpx;
   font-weight: 700;
   color: #173f36;
-  margin-bottom: 6rpx;
+  margin-bottom: 8rpx;
 }
 
 .concept-desc {
   display: block;
-  font-size: 22rpx;
-  color: #5c796c;
-  line-height: 1.45;
+  font-size: 24rpx;
+  color: #3b574a;
+  line-height: 1.6;
 }
 
 /* 目标倒推与现实检验 (Tab 3) */
@@ -931,29 +1112,29 @@
 
 .modal-box {
   width: 90%;
-  max-height: 85vh;
+  max-height: 90vh;
   overflow-y: auto;
   background: #ffffff;
   border-radius: 28rpx;
-  padding: 36rpx;
+  padding: 32rpx 34rpx;
   box-sizing: border-box;
 }
 
 .modal-box.compact {
   width: 84%;
-  padding: 32rpx;
+  padding: 30rpx;
 }
 
 .modal-title {
   font-size: 32rpx;
   font-weight: 700;
   color: #173f36;
-  margin-bottom: 22rpx;
+  margin-bottom: 20rpx;
   text-align: center;
 }
 
 .form-group {
-  margin-bottom: 22rpx;
+  margin-bottom: 20rpx;
 }
 
 .form-label {
@@ -970,9 +1151,25 @@
   margin-bottom: 8rpx;
 }
 
+.switch-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  margin-bottom: 6rpx;
+}
+
+.info-icon {
+  font-size: 24rpx;
+  color: #1b8166;
+  padding: 0 6rpx;
+  font-weight: 700;
+  line-height: 1;
+}
+
 .form-tip {
   font-size: 20rpx;
   color: #7b9689;
+  line-height: 1.4;
 }
 
 .form-tip-box {
@@ -982,8 +1179,8 @@
   padding: 12rpx 16rpx;
   font-size: 21rpx;
   color: #436a58;
-  line-height: 1.4;
-  margin-top: 10rpx;
+  line-height: 1.45;
+  margin-top: 8rpx;
 }
 
 /* 类型胶囊 */
@@ -1032,8 +1229,8 @@
 .modal-input {
   background: #f3f7f5;
   border: 2rpx solid #d9e5df;
-  border-radius: 16rpx;
-  padding: 18rpx 20rpx;
+  border-radius: 14rpx;
+  padding: 16rpx 20rpx;
   font-size: 26rpx;
   color: #173f36;
 }
@@ -1041,13 +1238,13 @@
 /* 不占位灰色提示样式 */
 .input-placeholder-gray {
   color: #9cb3a8;
-  font-size: 24rpx;
+  font-size: 23rpx;
 }
 
 .modal-row {
   display: flex;
   align-items: center;
-  gap: 14rpx;
+  gap: 12rpx;
 }
 
 .modal-input.half {
@@ -1067,12 +1264,22 @@
   background: #f7faf8;
   border: 2rpx solid #e1ebe5;
   border-radius: 16rpx;
-  padding: 18rpx;
+  padding: 16rpx 18rpx;
+  margin-bottom: 16rpx;
 }
 
 .switch-left {
   flex: 1;
-  padding-right: 18rpx;
+  padding-right: 16rpx;
+}
+
+.modal-footer-tip {
+  font-size: 22rpx;
+  color: #718f80;
+  line-height: 1.45;
+  margin-top: 14rpx;
+  margin-bottom: 4rpx;
+  text-align: center;
 }
 
 /* 紧凑小按钮区 */
@@ -1088,7 +1295,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 16rpx;
+  border-radius: 14rpx;
   font-size: 26rpx;
   font-weight: 600;
   transition: opacity 0.15s;
@@ -1106,4 +1313,109 @@
 .modal-btn.confirm {
   background: #173f36;
   color: #ffffff;
+}
+
+/* 底表重置轻量链接 */
+.reset-link-row {
+  margin-top: 32rpx;
+  margin-bottom: 24rpx;
+  display: flex;
+  justify-content: center;
+}
+
+.reset-link-btn {
+  font-size: 23rpx;
+  color: #728f81;
+  background: transparent;
+  padding: 10rpx 24rpx;
+  border-radius: 20rpx;
+  transition: all 0.2s ease;
+}
+
+.reset-link-btn:active {
+  background: #e5eee8;
+  color: #173f36;
+}
+
+/* 方法论与说明弹窗（与轻量版一致的高质感弹窗） */
+.rules-modal-box {
+  width: 88%;
+  max-height: 85vh;
+  background: #ffffff;
+  border-radius: 28rpx;
+  padding: 38rpx 34rpx;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.rules-modal-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #173f36;
+  text-align: center;
+  margin-bottom: 22rpx;
+}
+
+.rules-modal-body {
+  font-size: 24rpx;
+  color: #3b5a4e;
+  line-height: 1.6;
+}
+
+.rules-lead {
+  font-weight: 600;
+  color: #173f36;
+  margin-bottom: 14rpx;
+  font-size: 24rpx;
+  line-height: 1.5;
+}
+
+.rules-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10rpx;
+  margin-bottom: 14rpx;
+  font-size: 23rpx;
+  color: #4a685c;
+  line-height: 1.55;
+}
+
+.rules-item .num {
+  font-weight: 700;
+  color: #173f36;
+  flex-shrink: 0;
+}
+
+.rules-item-content {
+  flex: 1;
+}
+
+.rules-item-title {
+  font-weight: 700;
+  color: #173f36;
+}
+
+.rules-item-desc {
+  color: #4a685c;
+}
+
+.rules-close-btn {
+  margin-top: 26rpx;
+  background: transparent;
+  border: 2rpx solid #173f36;
+  color: #173f36;
+  font-size: 27rpx;
+  font-weight: 600;
+  height: 76rpx;
+  line-height: 72rpx;
+  border-radius: 16rpx;
+  padding: 0;
+  width: 100%;
+  text-align: center;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.rules-close-btn:active {
+  background: rgba(23, 63, 54, 0.08);
 }

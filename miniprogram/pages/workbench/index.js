@@ -12,6 +12,11 @@ function formatWan(num) {
   return `${val} 万`
 }
 
+function formatRate(rate) {
+  const pct = Math.round(Number(rate) * 10000) / 100
+  return Number.isInteger(pct) ? `${pct}.0%` : `${pct}%`
+}
+
 Page({
   data: {
     activeTab: 0,
@@ -24,7 +29,7 @@ Page({
     displayDiscountRate: '3.5%',
     displayGrowthRate: '1.0%',
     discountRateSlider: 35,
-    terminalGrowthRateSlider: 10,
+    terminalGrowthRateSlider: 100,
     targetValueWan: 300,
     isPathsExpanded: false,
 
@@ -67,25 +72,58 @@ Page({
       { id: 'other', label: '其他固定年费', defaultName: '商业保险与年费支出' }
     ],
 
-    // 资产负债弹窗
+    // 存量资产弹窗
     showAssetModal: false,
     isEditingAsset: false,
     editingAssetId: '',
     assetForm: {
-      name: '流动存款 / 理财',
+      name: '流动资金与定存',
       category: 'cash_deposit',
       conservativeValue: 80000,
       valuationMethod: 'nav'
     },
-    assetMethods: [
-      { id: 'nav', label: '资产法 (NAV)', desc: '按变现净值计入净资产' },
-      { id: 'cashflow', label: '收益法 (DCF)', desc: '已折现现金流，不重复计入' }
-    ],
+
+    // 自定义说明弹窗（轻量版同款）
+    showExplanationModal: false,
+    explanationTitle: '',
+    explanationLead: '',
+    explanationItems: [],
 
     // 目标现值自定义弹窗
     showTargetModal: false,
     targetInputWan: '',
-    hasTvEngine: false
+    hasTvEngine: false,
+    showTvActivatedBanner: false,
+    lastAddedTvName: '',
+
+    // 假设实验室标尺刻度与折叠状态
+    showConceptIntro: false,
+    rTicks: [
+      { label: '2%', val: 20, isMajor: true },
+      { label: '', val: 25, isMajor: false },
+      { label: '3%', val: 30, isMajor: true },
+      { label: '', val: 35, isMajor: false },
+      { label: '4%', val: 40, isMajor: true },
+      { label: '', val: 45, isMajor: false },
+      { label: '5%', val: 50, isMajor: true },
+      { label: '', val: 55, isMajor: false },
+      { label: '6%', val: 60, isMajor: true },
+      { label: '', val: 65, isMajor: false },
+      { label: '7%', val: 70, isMajor: true }
+    ],
+    gTicks: [
+      { label: '0%', val: 0, isMajor: true },
+      { label: '', val: 25, isMajor: false },
+      { label: '0.5%', val: 50, isMajor: true },
+      { label: '', val: 75, isMajor: false },
+      { label: '1.0%', val: 100, isMajor: true },
+      { label: '', val: 125, isMajor: false },
+      { label: '1.5%', val: 150, isMajor: true },
+      { label: '', val: 175, isMajor: false },
+      { label: '2.0%', val: 200, isMajor: true },
+      { label: '', val: 225, isMajor: false },
+      { label: '2.5%', val: 250, isMajor: true }
+    ]
   },
 
   onLoad(query) {
@@ -110,10 +148,10 @@ Page({
     this.setData({
       profile,
       targetValueWan,
-      displayDiscountRate: `${(discountRate * 100).toFixed(1)}%`,
-      displayGrowthRate: `${(terminalGrowthRate * 100).toFixed(1)}%`,
+      displayDiscountRate: formatRate(discountRate),
+      displayGrowthRate: formatRate(terminalGrowthRate),
       discountRateSlider: Math.round(discountRate * 1000),
-      terminalGrowthRateSlider: Math.round(terminalGrowthRate * 1000)
+      terminalGrowthRateSlider: Math.round(terminalGrowthRate * 10000)
     })
     this.recalculateAll(profile)
   },
@@ -143,10 +181,10 @@ Page({
         diagnosisInfo,
         hasTvEngine,
         displayPcsv: formatWan(forwardResult.totalPcsv),
-        displayDiscountRate: `${(discountRate * 100).toFixed(1)}%`,
-        displayGrowthRate: `${(terminalGrowthRate * 100).toFixed(1)}%`,
+        displayDiscountRate: formatRate(discountRate),
+        displayGrowthRate: formatRate(terminalGrowthRate),
         discountRateSlider: Math.round(discountRate * 1000),
-        terminalGrowthRateSlider: Math.round(terminalGrowthRate * 1000)
+        terminalGrowthRateSlider: Math.round(terminalGrowthRate * 10000)
       })
     } catch (err) {
       wx.showToast({ title: err.message || '计算出错', icon: 'none' })
@@ -201,7 +239,6 @@ Page({
   goToAddTvStream() {
     const currentAge = this.data.profile.currentAge || 32
     this.setData({
-      activeTab: 1,
       showAddStreamModal: true,
       isEditingStream: false,
       editingStreamId: '',
@@ -217,6 +254,10 @@ Page({
     })
   },
 
+  dismissTvActivatedBanner() {
+    this.setData({ showTvActivatedBanner: false })
+  },
+
 
   toggleBasis(e) {
     const basis = e.currentTarget.dataset.basis
@@ -226,10 +267,32 @@ Page({
 
   onRateChange(e) {
     const field = e.currentTarget.dataset.field
-    // step is 1 -> 0.1% = 0.001
-    const val = Number((Number(e.detail.value) / 1000).toFixed(4))
+    const rawVal = Number(e.detail.value)
+    let val
+    if (field === 'terminalGrowthRate') {
+      val = Number((rawVal / 10000).toFixed(4))
+    } else {
+      val = Number((rawVal / 1000).toFixed(4))
+    }
     const profile = { ...this.data.profile, [field]: val }
     this.updateProfile(profile)
+  },
+
+  onSelectTick(e) {
+    const field = e.currentTarget.dataset.field
+    const rawVal = Number(e.currentTarget.dataset.val)
+    let val
+    if (field === 'terminalGrowthRate') {
+      val = Number((rawVal / 10000).toFixed(4))
+    } else {
+      val = Number((rawVal / 1000).toFixed(4))
+    }
+    const profile = { ...this.data.profile, [field]: val }
+    this.updateProfile(profile)
+  },
+
+  toggleConceptIntro() {
+    this.setData({ showConceptIntro: !this.data.showConceptIntro })
   },
 
   onTargetSlider(e) {
@@ -357,12 +420,17 @@ Page({
     const currentName = this.data.newStream.name
     const isDefaultName = this.data.streamKinds.some(k => k.defaultName === currentName) || !currentName
 
+    let supportsTerminalValue = item.isTv
+    if (kind === 'labor') {
+      supportsTerminalValue = false
+    }
+
     this.setData({
       newStream: {
         ...this.data.newStream,
         kind,
         name: isDefaultName ? item.defaultName : currentName,
-        supportsTerminalValue: item.isTv
+        supportsTerminalValue
       }
     })
   },
@@ -396,10 +464,35 @@ Page({
   },
 
   onTerminalSwitch(e) {
+    if (this.data.newStream.kind === 'labor') return
     this.setData({
       newStream: { ...this.data.newStream, supportsTerminalValue: Boolean(e.detail.value) }
     })
   },
+
+  showTvExplanation() {
+    this.setData({
+      showExplanationModal: true,
+      explanationTitle: '脱离打卡独立造血 说明',
+      explanationLead: '仅指脱离日常打卡出勤后，仍能独立运转并产生净现金流的资产系统：',
+      explanationItems: [
+        {
+          title: '适合开启',
+          desc: '自动化店铺分红、出租物业租金、自媒体长尾流量/图书版权/独立软件等被动收益。'
+        },
+        {
+          title: '不适合开启',
+          desc: '主要受雇工薪、按小时计费的咨询顾问、接单外包等（人停钱停依然属于有限期劳动）。'
+        }
+      ]
+    })
+  },
+
+  closeExplanationModal() {
+    this.setData({ showExplanationModal: false })
+  },
+
+  noop() {},
 
   onNewStreamInput(e) {
     const field = e.currentTarget.dataset.field
@@ -439,13 +532,22 @@ Page({
       incomeStreams.push(newEntry)
     }
 
+    const hadNoTvEngine = !this.data.hasTvEngine
     const profile = { ...this.data.profile, incomeStreams }
-    this.setData({ showAddStreamModal: false })
-    this.updateProfile(profile)
-    wx.showToast({
-      title: this.data.isEditingStream ? '已更新收入流' : '已添加收入流',
-      icon: 'success'
+    const isNowTv = Boolean(streamData.supportsTerminalValue) && hadNoTvEngine
+    this.setData({
+      showAddStreamModal: false,
+      showTvActivatedBanner: isNowTv ? true : this.data.showTvActivatedBanner,
+      lastAddedTvName: isNowTv ? (streamData.name || '造血资产') : (this.data.lastAddedTvName || '')
     })
+    this.updateProfile(profile)
+    // 假设实验室激活造血业务后已有原位 Banner 明确提示，无需弹出遮挡视线的 Toast
+    if (!isNowTv) {
+      wx.showToast({
+        title: this.data.isEditingStream ? '已更新收入流' : '已添加收入流',
+        icon: 'success'
+      })
+    }
   },
 
   // ================= 刚性支出管理 =================

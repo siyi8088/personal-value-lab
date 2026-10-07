@@ -309,7 +309,7 @@ function calculateForwardDcf(profile) {
 
   // 2. 严格终值（Gordon TV）计算
   const qualifyingStreams = (profile.incomeStreams || []).filter(
-    s => s.supportsTerminalValue && ['business', 'rental', 'royalty'].includes(s.kind)
+    s => s.supportsTerminalValue && ['business', 'rental', 'royalty', 'side_job'].includes(s.kind)
   )
 
   const workYearsPossible = Math.max(0, expectedRetire - currentAge)
